@@ -1,0 +1,105 @@
+/* Estilo general */
+body {
+    font-family: "MS Sans Serif", Arial, sans-serif;
+    background-color: #C0C0C0;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos del contenedor principal */
+main {
+    width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #C0C0C0;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0 #808080;
+}
+
+/* Encabezado */
+header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #008080;
+    color: white;
+}
+
+header img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header nav ul li {
+    margin: 0 10px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Secciones */
+section {
+    background-color: #E0E0E0;
+    padding: 15px;
+    border: 2px solid black;
+    margin-top: 20px;
+}
+
+section h3 {
+    background-color: #000080;
+    color: white;
+    padding: 5px;
+    margin: 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* Inputs y botones */
+input[type="text"], input[type="password"] {
+    width: calc(100% - 10px);
+    padding: 5px;
+    border: 1px solid #808080;
+    background-color: white;
+    box-shadow: inset 1px 1px 0 #FFF, inset -1px -1px 0 #000;
+    margin-bottom: 10px;
+    font-family: "MS Sans Serif", Arial, sans-serif;
+}
+
+input[type="button"] {
+    background-color: #C0C0C0;
+    border: 2px solid #808080;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: "MS Sans Serif", Arial, sans-serif;
+    box-shadow: 1px 1px 0 #FFF, -1px -1px 0 #000;
+}
+
+input[type="button"]:active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #FFF;
+}
+
+/* Etiquetas y mensajes */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+p {
+    font-size: 14px;
+    background-color: #C0C0C0;
+    padding: 5px;
+    border: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #FFF, inset -1px -1px 0 #000;
+}
