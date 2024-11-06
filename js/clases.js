@@ -1,6 +1,7 @@
 class Usuarios{
-    constructor(id, nombre, apellido, nombreDeUsuario, contrasenia, numeroTarjetaCredito, cvc){
+    constructor(id, tipoDeUsuario, nombre, apellido, nombreDeUsuario, contrasenia, numeroTarjetaCredito, cvc){
         this.id = id;
+        this.tipo = tipoDeUsuario
         this.nombre = nombre;
         this.apellido = apellido;
         this.nombreDeUsuario = nombreDeUsuario;
@@ -10,15 +11,6 @@ class Usuarios{
         this.saldoInicial = 15000;
     }
 
-}
-
-class Administradores{
-    constructor(id, nombre, apellido, nombreDeUsuario){
-        this.id = id;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.nombreDeUsuario = nombreDeUsuario;
-    }
 }
 
 class Destinos{

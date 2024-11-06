@@ -19,26 +19,25 @@
     </figure>
 
     <nav>
-        <ul>
-            <li>
-                <a href="#">Inicio</a>
-            </li>
-            <li>
+        <ul id="navPrincipal">
+            <li class="btnSection admin" id="btnSectionViajes">
                 <a href="#">Viajes</a>
             </li>
-            <li>
+            <li class="btnSection user" id="btnSectionOfertas">
                 <a href="#">Ofertas</a>
             </li>
-            <li>
-                <a href="#">Login</a>
+            <li class="btnSection" id="btnSectionInforme"> 
+                <a href="#">Informe</a>
             </li>
-            <li>
-                <a href="#">Registro</a>
+            <li class="btnSection" id="btnSectionPagos">
+                <a href="#">Historial de Pagos</a>
             </li>
-            <li>
-                <a href="#">Perfil</a>
+            <li class="btnSection" id="btnSectionCrearDestinos">
+                <a href="#">Crear destinos</a>
             </li>
         </ul>
+        <p id="txtUsuarioActivo"></p>
+        <input type="button" id="btnCerrarSesion" value="Salir">
     </nav>
 </header>
 
@@ -52,8 +51,8 @@
                 <input type="text" id="txtApellido"><br>
                 <label for="txtUserNameRegistro">Ingrese su usuario: </label><br>
                 <input type="text" id="txtUserNameRegistro"><br>
-                <label for="txtContraseñaRegistro">Ingrese su contraseña: </label><br>
-                <input type="password" id="txtContraseñaRegistro"><br>
+                <label for="txtClaveRegistro">Ingrese su contraseña: </label><br>
+                <input type="password" id="txtClaveRegistro"><br>
 
                 <label for="txtTarjetaCredito">Ingrese su numero de Tarjeta</label><br>
                 <input type="text" id="txtTarjetaCredito"><br>
@@ -67,7 +66,7 @@
         <hr>
 
 
-        <section id="loginUsuario">
+        <section id="sectionLogin">
             <article>
                 <h3>LOGIN</h3>
                 <label for="txtNombreLogin">Ingrese su Usuario</label><br>
@@ -77,6 +76,10 @@
                 <input type="button" id="btnLogin" value="Login">
                 <p id="pLogin"></p>
             </article>
+
+        </section>
+
+        <section id="sectionViajes" class="section">
 
         </section>
     </main>

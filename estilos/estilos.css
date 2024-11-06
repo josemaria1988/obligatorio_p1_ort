@@ -103,3 +103,10 @@ p {
     border: 1px solid #808080;
     box-shadow: inset 1px 1px 0 #FFF, inset -1px -1px 0 #000;
 }
+
+#txtUsuarioActivo {
+    font-size: 20px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}

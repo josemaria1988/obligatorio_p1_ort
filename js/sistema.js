@@ -56,4 +56,27 @@ class Sistema{
         }
         return campoValidos;
     }
+
+    verificarFormatoPassword(password){
+        let passwordValida = false;
+        let tieneMayusculas = false;
+        let tieneNumeros = false;
+        let tieneMinusculas = false
+        for(let i = 0; i < password.length; i++){
+            
+            if(!isNaN(password[i])){
+                tieneNumeros = true;
+            }
+            if(password.charCodeAt(i) >= 65 && password.charCodeAt(i) <= 90){
+                tieneMayusculas = true;
+            }
+            if(password.charCodeAt(i) >= 97 && password.charCodeAt(i) <= 122){
+                tieneMinusculas = true;
+            }
+        }
+        if(tieneNumeros && tieneMayusculas && password.length > 5){
+            passwordValida = true;
+        }
+        return passwordValida;
+    }
 }
