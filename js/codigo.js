@@ -11,6 +11,15 @@ function inicio() {
     document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion);
     ocultarSecciones()
     ocultarBotones()
+
+    //TRANSFORMAMOS LOS LI EN BOTONES
+    let botones = document.querySelectorAll(".btnSection");
+    for (let i = 0; i < botones.length; i++) {
+        botones[i].addEventListener("click", mostrarSeccion)
+    }
+
+    // OCULTAMOS EL BOTON DE CERRAR SESION
+    document.querySelector("#btnCerrarSesion").style.display = "none"
 }
 
 let sistema = new Sistema();
@@ -18,6 +27,7 @@ let sistema = new Sistema();
 // Hardcodeando un usuario para pruebas
 const usuarioPrueba = new Usuarios(
     "0",
+    "user",
     "Juan",
     "Pérez",
     "juanperez",
@@ -27,6 +37,20 @@ const usuarioPrueba = new Usuarios(
     "123"
 );
 sistema.registrarUsuario(usuarioPrueba);
+
+// Hardcodeando un admin para pruebas
+const adminPrueba = new Usuarios(
+    "1",
+    "admin",
+    "Jose",
+    "Sosa",
+    "admin",
+    "clave123",
+    "Jose Sosa",
+    "",
+    ""
+);
+sistema.registrarUsuario(adminPrueba);
 
 
 
@@ -97,6 +121,10 @@ function iniciarSesion() {
 function cerrarSesion() {
     usuarioActivo = null
     document.querySelector("#txtUsuarioActivo").innerHTML = ``
+    ocultarBotones();
+    document.querySelector("#sectionLogin").style.display = "block"
+    document.querySelector("#sectionRegistro").style.display = "block"
+    document.querySelector("#btnCerrarSesion").style.display = "none"
 
 }
 
@@ -116,12 +144,8 @@ function ocultarSecciones() {
     }
 }
 function mostrarBotones(tipo) {
-    ocultarBotones();
-    console.log(tipo);
-    
-    let botonesMostrar = document.querySelectorAll("." + tipo);
-    console.log(botonesMostrar);
-    
+    ocultarBotones();   
+    let botonesMostrar = document.querySelectorAll("." + tipo); 
     for (let i = 0; i < botonesMostrar.length; i++) {
         botonesMostrar[i].style.display = "block";
     }
@@ -135,11 +159,13 @@ function ocultarBotones() {
 
 function mostrarMenuOcultandoLoginYRegistro() {
     mostrarBotones(usuarioActivo.tipo)
+    document.querySelector("#sectionViajes").style.display = "block"
     document.querySelector("#sectionLogin").style.display = "none";
     document.querySelector("#sectionRegistro").style.display = "none";
     document.querySelector("#navPrincipal").style.display = "block";
     document.querySelector("#txtUsuarioActivo").style.display = "block";
     document.querySelector("#txtUsuarioActivo").innerHTML = `${usuarioActivo.nombre}`
+    document.querySelector("#btnCerrarSesion").style.display = "block"
 }
 
 

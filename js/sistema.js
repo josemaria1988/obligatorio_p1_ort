@@ -2,7 +2,6 @@ class Sistema{
     constructor(){
         this.destinos = [];
         this.usuarios = [];
-        this.administradores = [];
         this.reservas = [];
     }
 
