@@ -13,6 +13,7 @@ class Sistema{
         this.administradores.push(admin);
     }
 
+    //METODOS PARA VALIDAR REGISTRO DE USUARIO
     validarCamposVaciosRegistro(pNombre, pApellido, pNombreUsuario, pClave, pNombreCompleto, pTarjetaCredito, pCvc){
         let campoValidos = false;
         if(pNombre !== "" && pApellido !== "" && pNombreUsuario !== "" && pClave !== "" && pNombreCompleto !== "" && pTarjetaCredito !== "" && pCvc !== ""){
@@ -24,6 +25,10 @@ class Sistema{
     registrarUsuario(usuario){
         this.usuarios.push(usuario)
     }
+
+
+    // METODOS PARA BUSCAR ELEMENTOS Y OBTENER OBJETOS
+
     buscarElemento(arrElementos, propiedad, valorBusqueda) {
         let existe = false
         for (let i = 0; i < arrElementos.length; i++) {
@@ -47,6 +52,9 @@ class Sistema{
         }
         return objeto;
     }
+
+
+    // METODOS VALIDAR LOGIN
 
     validarCamposLogin(pNombre, pClave){
         let campoValidos = false;
@@ -78,4 +86,18 @@ class Sistema{
         }
         return passwordValida;
     }
+
+
+    // METODOS PARA VALIDAR DATOS Y CREAR DESTINOS
+
+    validarCamposCrearDestino(nombre, precio, cupos, imagen, oferta, descripcion){
+        let validar = false;
+
+        if(nombre !== "" && !isNaN(precio) && precio > 0 && !isNaN(cupos) && cupos>0 && imagen !== "" && oferta !== "" && descripcion !== ""){
+            validar = true
+        }
+
+        return validar
+    }
+
 }

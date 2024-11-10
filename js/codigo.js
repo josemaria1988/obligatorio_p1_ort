@@ -20,6 +20,9 @@ function inicio() {
 
     // OCULTAMOS EL BOTON DE CERRAR SESION
     document.querySelector("#btnCerrarSesion").style.display = "none"
+
+    // CREAR DESTINOS USUARIO ADMIN
+    document.querySelector("#btnCargarDestino").addEventListener("click", crearDestinos);
 }
 
 let sistema = new Sistema();
@@ -115,7 +118,7 @@ function iniciarSesion() {
     }
 
     document.querySelector("#pLogin").innerHTML = mensaje
-    
+
 }
 
 function cerrarSesion() {
@@ -144,8 +147,8 @@ function ocultarSecciones() {
     }
 }
 function mostrarBotones(tipo) {
-    ocultarBotones();   
-    let botonesMostrar = document.querySelectorAll("." + tipo); 
+    ocultarBotones();
+    let botonesMostrar = document.querySelectorAll("." + tipo);
     for (let i = 0; i < botonesMostrar.length; i++) {
         botonesMostrar[i].style.display = "block";
     }
@@ -172,3 +175,28 @@ function mostrarMenuOcultandoLoginYRegistro() {
 //.........................DESTINOS..............................
 
 
+// ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
+
+let idDestinos = 0
+function crearDestinos() {
+    let nombreDestino = document.querySelector("#inputNombreDestino").value;
+    let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
+    let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
+    let imagenDestino = document.querySelector("#cargarImagenDestino");
+    let enOferta = document.querySelector("#slcOferta").value;
+    let descripcionDestino = document.querySelector("#descripcionDestino").value
+    let mensaje = ""
+
+    let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+    let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
+
+    if (datosValidos && !destinoRepetido) {
+        let nuevoDestino = new Destinos(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        idDestinos++
+        sistema.agregarNuevoDestino(nuevoDestino);
+        mensaje = "Destino agregado con éxito"
+    }else {
+        mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
+    }
+    document.querySelector("#pCrearDestino").innerHTML = mensaje
+}
