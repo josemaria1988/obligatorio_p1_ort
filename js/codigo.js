@@ -191,7 +191,7 @@ function crearDestinos() {
     let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
 
     if (datosValidos && !destinoRepetido) {
-        let nuevoDestino = new Destinos(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
         idDestinos++
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"

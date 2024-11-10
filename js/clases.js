@@ -14,7 +14,8 @@ class Usuarios{
 }
 
 class Destinos{
-    constructor(nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion){
+    constructor(idDestino, nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion){
+        this.id = idDestino;
         this.nombreDestino = nombreDestino;
         this.precioPorNoche = precioPorNoche;
         this.cuposDisponibles = cuposDisponibles;
