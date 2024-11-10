@@ -1,7 +1,5 @@
 window.addEventListener("load", inicio);
 
-
-
 function inicio() {
     //REGISTRO DE USUARIO
     document.querySelector("#btnRegistrarUsuario").addEventListener("click", tomarDatosRegistro);
@@ -23,44 +21,17 @@ function inicio() {
 
     // CREAR DESTINOS USUARIO ADMIN
     document.querySelector("#btnCargarDestino").addEventListener("click", crearDestinos);
+
+    // MOSTRAR DESTINOS AL USUARIO
+    mostrarDestinos()
+
+    // MOSTRAR DESTINOS EN OFERTA
+    mostrarDestinosEnOferta()
 }
 
 let sistema = new Sistema();
-
-// Hardcodeando un usuario para pruebas
-const usuarioPrueba = new Usuarios(
-    "0",
-    "user",
-    "Juan",
-    "Pérez",
-    "juanperez",
-    "clave123",
-    "Juan Pérez",
-    "1234567890123456",
-    "123"
-);
-sistema.registrarUsuario(usuarioPrueba);
-
-// Hardcodeando un admin para pruebas
-const adminPrueba = new Usuarios(
-    "1",
-    "admin",
-    "Jose",
-    "Sosa",
-    "admin",
-    "clave123",
-    "Jose Sosa",
-    "",
-    ""
-);
-sistema.registrarUsuario(adminPrueba);
-
-
-
-
-
 //.....................................REGISTRO DE USUARIO.........................................
-let idUsuario = 0
+let idUsuario = 2
 function tomarDatosRegistro() {
     let nombre = document.querySelector("#txtNombrePersona").value;
     let apellido = document.querySelector("#txtApellido").value;
@@ -94,10 +65,7 @@ function tomarDatosRegistro() {
     document.querySelector("#pMensajesRegistro").innerHTML = mensaje;
 
 }
-
-
 //...........................................LOGIN DE USUARIO.............................................
-
 let usuarioActivo = null;
 function iniciarSesion() {
     let nombre = document.querySelector("#txtNombreLogin").value;
@@ -172,12 +140,50 @@ function mostrarMenuOcultandoLoginYRegistro() {
 }
 
 
-//.........................DESTINOS..............................
+//.........................MOSTRAR TODOS LOS DESTINOS..............................
+
+function mostrarDestinos() {
+    document.querySelector("#sectionViajes").innerHTML = "";
+
+    for (let i = 0; i < sistema.destinos.length; i++) {
+        let destinoActual = sistema.destinos[i]
+        let destinoHTML = document.createElement("article");
+        destinoHTML.innerHTML =
+            `<h4>${destinoActual.nombreDestino}</h4>
+            <img src="/img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
+            <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+            <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
+            <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
+            <p>${destinoActual.descripcion}</p>`
+
+        document.querySelector("#sectionViajes").appendChild(destinoHTML)
+    }
+}
+
+function mostrarDestinosEnOferta() {
+    document.querySelector("#sectionOfertas").innerHTML = "";
+
+    for (let i = 0; i < sistema.destinos.length; i++) {
+        let destinoActual = sistema.destinos[i]
+        if(destinoActual.estaEnOferta){
+            let destinoHTML = document.createElement("article");
+            destinoHTML.innerHTML =
+                `<h4>${destinoActual.nombreDestino}</h4>
+                <img src="/img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
+                <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+                <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
+                <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
+                <p>${destinoActual.descripcion}</p>`
+    
+            document.querySelector("#sectionOfertas").appendChild(destinoHTML)
+        }
+    }
+}
 
 
 // ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
 
-let idDestinos = 0
+let idDestinos = 6
 function crearDestinos() {
     let nombreDestino = document.querySelector("#inputNombreDestino").value;
     let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
@@ -195,7 +201,7 @@ function crearDestinos() {
         idDestinos++
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"
-    }else {
+    } else {
         mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
     }
     document.querySelector("#pCrearDestino").innerHTML = mensaje

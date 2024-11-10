@@ -1,7 +1,17 @@
 class Sistema{
     constructor(){
-        this.destinos = [];
-        this.usuarios = [];
+        this.destinos = [
+            new Destinos(0, "París", 1500, 10, "paris.jpg", true, "La ciudad del amor con arquitectura icónica y museos famosos."),
+            new Destinos(1, "Tokio", 2000, 8, "tokio.jpg", false, "Una mezcla vibrante de tradición y tecnología moderna."),
+            new Destinos(2, "Nueva York", 1800, 12, "nuevayork.jpg", true, "La ciudad que nunca duerme, llena de rascacielos y cultura."),
+            new Destinos(3, "Roma", 1400, 15, "roma.jpg", false, "Ciudad eterna, famosa por su historia y monumentos antiguos."),
+            new Destinos(4, "Sídney", 1700, 7, "sidney.jpg", true, "Famosa por la Ópera de Sídney y sus hermosas playas."),
+            new Destinos(5, "Río de Janeiro", 1300, 20, "riodejaneiro.jpg", false, "Hermosas playas, Carnaval y el Cristo Redentor.")
+        ];
+        this.usuarios = [
+            new Usuarios(0, "admin", "Jose", "Sosa", "admin", "clave123", "Jose Sosa", "", ""),
+            new Usuarios(1, "user", "Juan", "Pérez", "juanperez", "clave123", "Juan Pérez", "1234567890123456", "123")
+        ];
         this.reservas = [];
     }
 
