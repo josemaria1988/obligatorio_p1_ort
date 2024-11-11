@@ -23,3 +23,14 @@ class Destinos{
         this.descripcion = descripcion;
     }
 }
+
+class Reserva{
+    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, importeTotal, estado){
+        this.idReserva = idReserva;
+        this.idUsuario = idUsuario;
+        this.nombreDestino = nombreDestino;
+        this.nombreDeUsuario = nombreDeUsuario;
+        this.importeTotal = importeTotal;
+        this.estado = estado;
+    }
+}

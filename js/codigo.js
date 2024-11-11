@@ -7,6 +7,7 @@ function inicio() {
     document.querySelector("#btnLogin").addEventListener("click", iniciarSesion);
     //CERRAR SESION
     document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion);
+    document.querySelector("#btnReservar").addEventListener("click", );
     ocultarSecciones()
     ocultarBotones()
 
@@ -18,6 +19,9 @@ function inicio() {
 
     // OCULTAMOS EL BOTON DE CERRAR SESION
     document.querySelector("#btnCerrarSesion").style.display = "none"
+
+    // CREAR RESERVA
+
 
     // CREAR DESTINOS USUARIO ADMIN
     document.querySelector("#btnCargarDestino").addEventListener("click", crearDestinos);
@@ -154,9 +158,10 @@ function mostrarDestinos() {
             <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
             <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
             <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
-            <p>${destinoActual.descripcion}</p>`
+            <p>${destinoActual.descripcion}</p>
+            <input type="button" class="btnReservar" value="Reservar" id="${destinoActual.nombreDestino}">`
 
-        document.querySelector("#sectionViajes").appendChild(destinoHTML)
+        document.querySelector("#sectionViajes").appendChild(destinoHTML);
     }
 }
 
@@ -184,25 +189,31 @@ function mostrarDestinosEnOferta() {
 // ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
 
 let idDestinos = 6
-function crearDestinos() {
+function crearDestinos(){
     let nombreDestino = document.querySelector("#inputNombreDestino").value;
     let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
     let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
     let imagenDestino = document.querySelector("#cargarImagenDestino");
     let enOferta = document.querySelector("#slcOferta").value;
-    let descripcionDestino = document.querySelector("#descripcionDestino").value
-    let mensaje = ""
+    let descripcionDestino = document.querySelector("#descripcionDestino").value;
+    let mensaje = "";
 
     let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
     let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
 
     if (datosValidos && !destinoRepetido) {
         let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
-        idDestinos++
+        idDestinos++;
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"
     } else {
         mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
     }
     document.querySelector("#pCrearDestino").innerHTML = mensaje
+}
+
+function crearReserva(){
+    let objetoReserva = sistema.obtenerObjeto(sistema.Destinos, "nombreDestino", )
+    obtenerObjeto()
+    let nuevaReserva = new Reserva()
 }
