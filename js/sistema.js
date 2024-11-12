@@ -19,8 +19,8 @@ class Sistema{
         this.destinos.push(destino);
     }
 
-    agregarReserva(admin){
-        this.administradores.push(admin);
+    agregarReserva(data){
+        this.reservas.push(data);
     }
 
     //METODOS PARA VALIDAR REGISTRO DE USUARIO

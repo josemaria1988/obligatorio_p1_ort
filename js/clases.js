@@ -14,7 +14,8 @@ class Usuarios{
 }
 
 class Destinos{
-    constructor(nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion){
+    constructor(idDestinos, nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion){
+        this.id = idDestinos
         this.nombreDestino = nombreDestino;
         this.precioPorNoche = precioPorNoche;
         this.cuposDisponibles = cuposDisponibles;
@@ -25,12 +26,16 @@ class Destinos{
 }
 
 class Reserva{
-    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, importeTotal, estado){
+    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, fechaReserva, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estado){
         this.idReserva = idReserva;
         this.idUsuario = idUsuario;
         this.nombreDestino = nombreDestino;
         this.nombreDeUsuario = nombreDeUsuario;
+        this.fecha = fechaReserva;
+        this.cantidadPersonas = cantidadPersonas;
+        this.dias = cantidadDeDias;
         this.importeTotal = importeTotal;
+        this.medioDePago = medioDePago;
         this.estado = estado;
     }
 }

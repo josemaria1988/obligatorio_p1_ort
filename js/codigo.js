@@ -7,7 +7,6 @@ function inicio() {
     document.querySelector("#btnLogin").addEventListener("click", iniciarSesion);
     //CERRAR SESION
     document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion);
-    document.querySelector("#btnReservar").addEventListener("click", );
     ocultarSecciones()
     ocultarBotones()
 
@@ -154,14 +153,30 @@ function mostrarDestinos() {
         let destinoHTML = document.createElement("article");
         destinoHTML.innerHTML =
             `<h4>${destinoActual.nombreDestino}</h4>
-            <img src="/img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
+            <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
             <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
             <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
             <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
             <p>${destinoActual.descripcion}</p>
+            <label for="fechaDesde">Desde: </label>
+            <input type="date" name="" id="fechaDesde">
+            <label for="fechaHasta">Hasta: </label>
+            <input type="date" name="" id="fechaHasta">
+            <label for="cantidadPersonas">Cantidad de personas: </label>
+            <input type="number" name="" id="cantidadPersonas">
+            <label for="slcMedioDePago">Seleccione un medio de pago: </label>
+            <select id="slcMedioDePago">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Millas">Millas</option>
+            </select>
             <input type="button" class="btnReservar" value="Reservar" id="${destinoActual.nombreDestino}">`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
+        console.log(destinoActual.nombreDestino)
+    }
+    let btnsReservar = document.querySelectorAll(".btnReservar");
+    for (let i = 0; i < btnsReservar.length; i++) {
+        btnsReservar[i].addEventListener("click", reservarDestino);
     }
 }
 
@@ -170,7 +185,7 @@ function mostrarDestinosEnOferta() {
 
     for (let i = 0; i < sistema.destinos.length; i++) {
         let destinoActual = sistema.destinos[i]
-        if(destinoActual.estaEnOferta){
+        if (destinoActual.estaEnOferta) {
             let destinoHTML = document.createElement("article");
             destinoHTML.innerHTML =
                 `<h4>${destinoActual.nombreDestino}</h4>
@@ -178,10 +193,26 @@ function mostrarDestinosEnOferta() {
                 <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
                 <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
                 <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
-                <p>${destinoActual.descripcion}</p>`
-    
+                <p>${destinoActual.descripcion}</p>
+                <label for="fechaViaje">Desde: </label>
+                <input type="date" id="fechaViaje">
+              <label for="cantidadDeDias">Hasta: </label>
+              <input type="date" id="cantidadDeDias">
+               <label for="cantidadPersonas">Cantidad de personas: </label>
+               <input type="number" name="" id="cantidadPersonas">
+               <label for="slcMedioDePago">Seleccione un medio de pago: </label>
+               <select id="slcMedioDePago">
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Millas">Millas</option>
+               </select>
+                <input type="button" class="btnReservar" value="Reservar" id="${destinoActual.nombreDestino}">`
             document.querySelector("#sectionOfertas").appendChild(destinoHTML)
         }
+    }
+
+    let btnsReservar = document.querySelectorAll(".btnReservar");
+    for (let i = 0; i < btnsReservar.length; i++) {
+        btnsReservar[i].addEventListener("click", reservarDestino);
     }
 }
 
@@ -189,7 +220,7 @@ function mostrarDestinosEnOferta() {
 // ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
 
 let idDestinos = 6
-function crearDestinos(){
+function crearDestinos() {
     let nombreDestino = document.querySelector("#inputNombreDestino").value;
     let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
     let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
@@ -212,8 +243,21 @@ function crearDestinos(){
     document.querySelector("#pCrearDestino").innerHTML = mensaje
 }
 
-function crearReserva(){
-    let objetoReserva = sistema.obtenerObjeto(sistema.Destinos, "nombreDestino", )
-    obtenerObjeto()
-    let nuevaReserva = new Reserva()
+function reservarDestino() {
+    let nombreDestino = this.getAttribute("id");
+    let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
+    let fechaViaje = document.querySelector("#fechaViaje").value;
+    let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
+    let cantidadPersonas = document.querySelector("#cantidadPersonas").value;
+    let medioDePago = document.querySelector("#slcMedioDePago").value;
+
+    let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
+    let estadoReserva = "pendiente"
+    let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva )
+    sistema.agregarReserva(nuevaReserva)
+    document.querySelector(`#${nombreDestino}`).disabled
+    alert("Reserva reservada con exito")
 }
+
+
+//idReserva, idUsuario, nombreDestino, nombreDeUsuario, importeTotal, estado
