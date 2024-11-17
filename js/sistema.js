@@ -113,12 +113,18 @@ class Sistema{
     // BUSCAR Y SELECCIONAR RESERVAS DEL USUARIO ACTIVO
     obtenerReservas(idUsuario){
         let reservasUsuario = [];
-        for(let i = 0; i < this.reservas.length; i++){
-            let reserva = this.reservas[i]
-            if(reserva.idUsuario === idUsuario){
-                reservasUsuario.push(reserva)
+        let usuarioActivo = this.obtenerObjeto(this.usuarios, "id", idUsuario)
+        if (usuarioActivo.tipo === "user") {
+            for (let i = 0; i < this.reservas.length; i++) {
+                let reserva = this.reservas[i];
+                if (reserva.idUsuario === idUsuario) {
+                    reservasUsuario.push(reserva);
+                }
             }
+        } else if (usuarioActivo.tipo === "admin") {
+            reservasUsuario = [...this.reservas];
         }
+
         return reservasUsuario
     }
 }

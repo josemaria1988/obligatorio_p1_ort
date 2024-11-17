@@ -32,7 +32,10 @@ function inicio() {
     mostrarDestinosEnOferta()
 
     //MOSTRAR RESERVAS AL USUARIO
-    document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas)
+    document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
+
+    //MOSTRAR RESERVAS AL ADMIN
+    document.querySelector("#btnSectionGestionarReservas").addEventListener("click", gestionarReservas);
 }
 
 let sistema = new Sistema();
@@ -279,15 +282,58 @@ function mostrarReservas() {
 
         let reservaHTML = document.createElement("article");
         reservaHTML.innerHTML =
-            `<h4>Reservas del Usuario: ${usuarioActivo.nombre} ${usuarioActivo.apellido}</h4>
+            `<h4>Reservas del Usuario: ${reservaActual.nombre}</h4>
+                <p>Destino: ${reservaActual.nombreDestino}</p>
+                <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
+                <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
+                <p>Fecha de salida: ${reservaActual.fecha}</p>
+                <p>Total a pagar: ${reservaActual.importeTotal}</p>
+                <p> Estado de la reserva: ${reservaActual.estado}</p>`
+        document.querySelector("#sectionInformes").appendChild(reservaHTML)
+
+    }
+}
+
+// ..................... GESTIONAR LAS RESERVAS DE LOS USUARIOS...............................
+
+function gestionarReservas() {
+    document.querySelector("#sectionGestionarReservas").innerHTML = "";
+    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
+    console.log(reservasDelUsuario)
+
+    for (let i = 0; i < reservasDelUsuario.length; i++) {
+        let reservaActual = reservasDelUsuario[i]
+
+        let reservaHTML = document.createElement("article");
+        reservaHTML.innerHTML =
+            `<h4>Reservas del Usuario: ${reservaActual.nombre}</h4>
                 <p>Destino: ${reservaActual.nombreDestino}</p>
                 <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
                 <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
                 <p>Fecha de salida: ${reservaActual.fecha}</p>
                 <p>Total a pagar: ${reservaActual.importeTotal}</p>
                 <p> Estado de la reserva: ${reservaActual.estado}</p>
-                <p>Usuario: ${usuarioActivo.nombreDeUsuario}</p>`
-        document.querySelector("#sectionInformes").appendChild(reservaHTML)
+                <input type="button" class="btnConfirmar" data-confirmar="${reservaActual.idReserva}" value="Confirmar">
+                <input type="button" class="btnRechazar" data-rechazar="${reservaActual.idReserva}" value="Rechazar">`
+        document.querySelector("#sectionGestionarReservas").appendChild(reservaHTML)
 
     }
+
+    let btnsConfirmar = document.querySelectorAll(".btnConfirmar");
+    for (let i = 0; i < btnsReservar.length; i++) {
+        btnsConfirmar[i].addEventListener("click", confirmarReserva);
+    }
+
+    let btnsRechazar = document.querySelectorAll(".btnRechazar");
+    for (let i = 0; i < btnsReservar.length; i++) {
+        btnsRechazar[i].addEventListener("click", rechazarReserva);
+    }
+}
+
+// CONFIRMAR RESERVA
+
+function confirmarReserva() {
+    let idReserva = this.getAttribute("data-confirmar")
+    let reserva = sistema.obtenerObjeto(sistema.reservas, "id", idReserva);
+    
 }
