@@ -99,9 +99,13 @@ function cerrarSesion() {
     usuarioActivo = null
     document.querySelector("#txtUsuarioActivo").innerHTML = ``
     ocultarBotones();
+    ocultarSecciones();
     document.querySelector("#sectionLogin").style.display = "block"
     document.querySelector("#sectionRegistro").style.display = "block"
     document.querySelector("#btnCerrarSesion").style.display = "none"
+    document.querySelector("#txtNombreLogin").value = "";
+    document.querySelector("#txtClaveLogin").value = "";
+    document.querySelector("#pLogin").innerHTML = "";
 
 }
 
@@ -161,12 +165,12 @@ function mostrarDestinos() {
             <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
             <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
             <p>${destinoActual.descripcion}</p>
-            <label for="fechaDesde">Desde: </label>
-            <input type="date" name="" id="fechaDesde">
-            <label for="fechaHasta">Hasta: </label>
-            <input type="date" name="" id="fechaHasta">
+            <label for="fechaViaje">Desde: </label>
+            <input type="date"  id="fechaViaje">
+            <label for="fechaHasta">Ingrese la cantidad de dias: </label>
+            <input type="number" id="cantidadDeDias">
             <label for="cantidadPersonas">Cantidad de personas: </label>
-            <input type="number" name="" id="cantidadPersonas">
+            <input type="number" id="cantidadPersonas">
             <label for="slcMedioDePago">Seleccione un medio de pago: </label>
             <select id="slcMedioDePago">
                 <option value="Efectivo">Efectivo</option>
@@ -199,7 +203,7 @@ function mostrarDestinosEnOferta() {
                 <label for="fechaViaje">Desde: </label>
                 <input type="date" id="fechaViaje">
               <label for="cantidadDeDias">Hasta: </label>
-              <input type="date" id="cantidadDeDias">
+              <input type="number" id="cantidadDeDias">
                <label for="cantidadPersonas">Cantidad de personas: </label>
                <input type="number" name="" id="cantidadPersonas">
                <label for="slcMedioDePago">Seleccione un medio de pago: </label>
@@ -218,55 +222,57 @@ function mostrarDestinosEnOferta() {
     }
 }
 
-    // ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
+// ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
 
-    let idDestinos = 6
-    function crearDestinos() {
-        let nombreDestino = document.querySelector("#inputNombreDestino").value;
-        let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
-        let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
-        let imagenDestino = document.querySelector("#cargarImagenDestino");
-        let enOferta = document.querySelector("#slcOferta").value;
-        let descripcionDestino = document.querySelector("#descripcionDestino").value;
-        let mensaje = "";
+let idDestinos = 6
+function crearDestinos() {
+    let nombreDestino = document.querySelector("#inputNombreDestino").value;
+    let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
+    let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
+    let imagenDestino = document.querySelector("#cargarImagenDestino");
+    let enOferta = document.querySelector("#slcOferta").value;
+    let descripcionDestino = document.querySelector("#descripcionDestino").value;
+    let mensaje = "";
 
-        let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
-        let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
+    let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+    let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
 
-        if (datosValidos && !destinoRepetido) {
-            let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
-            idDestinos++;
-            sistema.agregarNuevoDestino(nuevoDestino);
-            mensaje = "Destino agregado con éxito"
-        } else {
-            mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
-        }
-        document.querySelector("#pCrearDestino").innerHTML = mensaje
+    if (datosValidos && !destinoRepetido) {
+        let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        idDestinos++;
+        sistema.agregarNuevoDestino(nuevoDestino);
+        mensaje = "Destino agregado con éxito"
+    } else {
+        mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
     }
+    document.querySelector("#pCrearDestino").innerHTML = mensaje
+}
 
-    //.................................RESERVA DE DESTINOS USUARIO....................................
-    function reservarDestino() {
-        let nombreDestino = this.getAttribute("data-destino");
-        let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
-        let fechaViaje = document.querySelector("#fechaViaje").value;
-        let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
-        let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
-        let medioDePago = document.querySelector("#slcMedioDePago").value;
+//.................................RESERVA DE DESTINOS USUARIO....................................
+function reservarDestino() {
+    let nombreDestino = this.getAttribute("data-destino");
+    let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
+    let fechaViaje = document.querySelector("#fechaViaje").value;
+    console.log(fechaViaje)
+    let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
+    console.log(cantidadDeDias)
+    let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
+    console.log(cantidadPersonas)
+    let medioDePago = document.querySelector("#slcMedioDePago").value;
 
-        let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-        let estadoReserva = "pendiente"
-        let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
-        sistema.agregarReserva(nuevaReserva)
-        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
-        document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
-        alert("Reserva reservada con exito")
-    }
+    let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
+    let estadoReserva = "pendiente"
+    let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
+    sistema.agregarReserva(nuevaReserva)
+    document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
+    document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
+    alert("Reserva reservada con exito")
+}
 
-    // ................................MOSTRAR DESTINOS RESERVADOS AL USUARIO............................................
+// ................................MOSTRAR DESTINOS RESERVADOS AL USUARIO............................................
 function mostrarReservas() {
     document.querySelector("#sectionInformes").innerHTML = "";
     let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
-    console.log(reservasDelUsuario)
 
     for (let i = 0; i < reservasDelUsuario.length; i++) {
         let reservaActual = reservasDelUsuario[i]
@@ -274,11 +280,13 @@ function mostrarReservas() {
         let reservaHTML = document.createElement("article");
         reservaHTML.innerHTML =
             `<h4>Reservas del Usuario: ${usuarioActivo.nombre} ${usuarioActivo.apellido}</h4>
-                <p>Destino: ${reservaActual.nombreDestino}<p>
-                <p>Identificacion de reserva: $${reservaActual.idReserva}</p>
+                <p>Destino: ${reservaActual.nombreDestino}</p>
+                <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
                 <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
-                <p>Fecha de salida: ${reservaActual.fechaReserva}<p>
-                <p>Usuario: ${usuarioActivo.nombreDeUsuario}`
+                <p>Fecha de salida: ${reservaActual.fecha}</p>
+                <p>Total a pagar: ${reservaActual.importeTotal}</p>
+                <p> Estado de la reserva: ${reservaActual.estado}</p>
+                <p>Usuario: ${usuarioActivo.nombreDeUsuario}</p>`
         document.querySelector("#sectionInformes").appendChild(reservaHTML)
 
     }
