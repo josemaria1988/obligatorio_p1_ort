@@ -30,6 +30,9 @@ function inicio() {
 
     // MOSTRAR DESTINOS EN OFERTA
     mostrarDestinosEnOferta()
+
+    //MOSTRAR RESERVAS AL USUARIO
+    document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas)
 }
 
 let sistema = new Sistema();
@@ -169,10 +172,9 @@ function mostrarDestinos() {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Millas">Millas</option>
             </select>
-            <input type="button" class="btnReservar" value="Reservar" id="${destinoActual.nombreDestino}">`
+            <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
-        console.log(destinoActual.nombreDestino)
     }
     let btnsReservar = document.querySelectorAll(".btnReservar");
     for (let i = 0; i < btnsReservar.length; i++) {
@@ -205,7 +207,7 @@ function mostrarDestinosEnOferta() {
                     <option value="Efectivo">Efectivo</option>
                     <option value="Millas">Millas</option>
                </select>
-                <input type="button" class="btnReservar" value="Reservar" id="${destinoActual.nombreDestino}">`
+                <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
             document.querySelector("#sectionOfertas").appendChild(destinoHTML)
         }
     }
@@ -216,48 +218,68 @@ function mostrarDestinosEnOferta() {
     }
 }
 
+    // ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
 
-// ...........................................CREAR DESTINOS USUARIO ADMIN.........................................
+    let idDestinos = 6
+    function crearDestinos() {
+        let nombreDestino = document.querySelector("#inputNombreDestino").value;
+        let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
+        let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
+        let imagenDestino = document.querySelector("#cargarImagenDestino");
+        let enOferta = document.querySelector("#slcOferta").value;
+        let descripcionDestino = document.querySelector("#descripcionDestino").value;
+        let mensaje = "";
 
-let idDestinos = 6
-function crearDestinos() {
-    let nombreDestino = document.querySelector("#inputNombreDestino").value;
-    let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
-    let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
-    let imagenDestino = document.querySelector("#cargarImagenDestino");
-    let enOferta = document.querySelector("#slcOferta").value;
-    let descripcionDestino = document.querySelector("#descripcionDestino").value;
-    let mensaje = "";
+        let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
 
-    let datosValidos = sistema.validarCamposCrearDestino(nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
-    let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
-
-    if (datosValidos && !destinoRepetido) {
-        let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
-        idDestinos++;
-        sistema.agregarNuevoDestino(nuevoDestino);
-        mensaje = "Destino agregado con éxito"
-    } else {
-        mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
+        if (datosValidos && !destinoRepetido) {
+            let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+            idDestinos++;
+            sistema.agregarNuevoDestino(nuevoDestino);
+            mensaje = "Destino agregado con éxito"
+        } else {
+            mensaje = "El destino ya existe o los datos no fueron cargados correctamente"
+        }
+        document.querySelector("#pCrearDestino").innerHTML = mensaje
     }
-    document.querySelector("#pCrearDestino").innerHTML = mensaje
+
+    //.................................RESERVA DE DESTINOS USUARIO....................................
+    function reservarDestino() {
+        let nombreDestino = this.getAttribute("data-destino");
+        let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
+        let fechaViaje = document.querySelector("#fechaViaje").value;
+        let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
+        let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
+        let medioDePago = document.querySelector("#slcMedioDePago").value;
+
+        let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
+        let estadoReserva = "pendiente"
+        let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
+        sistema.agregarReserva(nuevaReserva)
+        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
+        document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
+        alert("Reserva reservada con exito")
+    }
+
+    // ................................MOSTRAR DESTINOS RESERVADOS AL USUARIO............................................
+function mostrarReservas() {
+    document.querySelector("#sectionInformes").innerHTML = "";
+    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
+    console.log(reservasDelUsuario)
+
+    for (let i = 0; i < reservasDelUsuario.length; i++) {
+        let reservaActual = reservasDelUsuario[i]
+
+        let reservaHTML = document.createElement("article");
+        reservaHTML.innerHTML =
+            `<h4>Reservas del Usuario: ${usuarioActivo.nombre} ${usuarioActivo.apellido}</h4>
+                <p>Destino: ${reservaActual.nombreDestino}<p>
+                <p>Identificacion de reserva: $${reservaActual.idReserva}</p>
+                <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
+                <p>Fecha de salida: ${reservaActual.fechaReserva}<p>
+                <p>Usuario: ${usuarioActivo.nombreDeUsuario}`
+        document.querySelector("#sectionInformes").appendChild(reservaHTML)
+
+    }
 }
-
-function reservarDestino() {
-    let nombreDestino = this.getAttribute("id");
-    let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
-    let fechaViaje = document.querySelector("#fechaViaje").value;
-    let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
-    let cantidadPersonas = document.querySelector("#cantidadPersonas").value;
-    let medioDePago = document.querySelector("#slcMedioDePago").value;
-
-    let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-    let estadoReserva = "pendiente"
-    let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva )
-    sistema.agregarReserva(nuevaReserva)
-    document.querySelector(`#${nombreDestino}`).disabled
-    alert("Reserva reservada con exito")
-}
-
-
-//idReserva, idUsuario, nombreDestino, nombreDeUsuario, importeTotal, estado

@@ -110,4 +110,15 @@ class Sistema{
         return validar
     }
 
+    // BUSCAR Y SELECCIONAR RESERVAS DEL USUARIO ACTIVO
+    obtenerReservas(idUsuario){
+        let reservasUsuario = [];
+        for(let i = 0; i < this.reservas.length; i++){
+            let reserva = this.reservas[i]
+            if(reserva.idUsuario === idUsuario){
+                reservasUsuario.push(reserva)
+            }
+        }
+        return reservasUsuario
+    }
 }
