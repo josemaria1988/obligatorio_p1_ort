@@ -127,4 +127,27 @@ class Sistema{
 
         return reservasUsuario
     }
+
+    // COMO COBRARLE AL USUARIO
+    cobrarAlUsuario(usuario, importeTotal, medioDePago) {
+        let resultado = {cobro, mensaje}
+    
+        if (medioDePago === "Millas") {
+            if (usuario.saldoInicial >= importeTotal) {
+                usuario.saldoInicial -= importeTotal;
+                resultado.cobro = true;
+                resultado.mensaje = "Pago realizado completamente con millas.";
+            } else {
+                let restante = importeTotal - usuario.saldoInicial;
+                usuario.saldoInicial = 0;
+                resultado.cobro = true;
+                resultado.mensaje = `Pago realizado con millas y efectivo. Millas utilizadas: ${usuario.saldoInicial}, saldo restante pagado en efectivo: $${restante}.`
+            }
+        } else if (medioDePago === "Efectivo") {
+            cobro = true;
+            mensaje = "Pago realizado completamente en efectivo.";
+        }
+    
+        return resultado;
+    }
 }

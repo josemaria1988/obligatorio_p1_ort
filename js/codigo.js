@@ -282,7 +282,7 @@ function mostrarReservas() {
 
         let reservaHTML = document.createElement("article");
         reservaHTML.innerHTML =
-            `<h4>Reservas del Usuario: ${reservaActual.nombre}</h4>
+            `<h4>Reservas del Usuario: ${reservaActual.nombreDeUsuario}</h4>
                 <p>Destino: ${reservaActual.nombreDestino}</p>
                 <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
                 <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
@@ -306,7 +306,7 @@ function gestionarReservas() {
 
         let reservaHTML = document.createElement("article");
         reservaHTML.innerHTML =
-            `<h4>Reservas del Usuario: ${reservaActual.nombre}</h4>
+            `<h4>Reservas del Usuario: ${reservaActual.nombreDeUsuario}</h4>
                 <p>Destino: ${reservaActual.nombreDestino}</p>
                 <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
                 <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
@@ -320,12 +320,12 @@ function gestionarReservas() {
     }
 
     let btnsConfirmar = document.querySelectorAll(".btnConfirmar");
-    for (let i = 0; i < btnsReservar.length; i++) {
+    for (let i = 0; i < btnsConfirmar.length; i++) {
         btnsConfirmar[i].addEventListener("click", confirmarReserva);
     }
 
     let btnsRechazar = document.querySelectorAll(".btnRechazar");
-    for (let i = 0; i < btnsReservar.length; i++) {
+    for (let i = 0; i < btnsRechazar.length; i++) {
         btnsRechazar[i].addEventListener("click", rechazarReserva);
     }
 }
@@ -335,5 +335,21 @@ function gestionarReservas() {
 function confirmarReserva() {
     let idReserva = this.getAttribute("data-confirmar")
     let reserva = sistema.obtenerObjeto(sistema.reservas, "id", idReserva);
+    let usuario = sistema.obtenerObjeto(sistema.usuarios, "id", reserva.idUsuario)
+    let destino = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", reserva.nombreDestino)
+
+    if (reserva.cantidadPersonas > destino.cuposDisponibles) {
+        alert("No hay suficientes cupos disponibles para confirmar la reserva.");
+        cancelarReserva();
+        return;
+    }
+
+    let resultado = sistema.cobrarAlUsuario(usuario, reserva.importeTotal, reserva.medioDePago)
+    if(resultado.cobro === true) {
+        destino.cuposDisponibles -= reserva.cantidadPersonas;
+        reserva.estado = "confirmada";
+        alert("Reserva confirmada exitosamente.\n" + resultado.mensaje);
+    }
+    
     
 }
