@@ -9,6 +9,7 @@ class Usuarios{
         this.numeroTarjetaCredito = numeroTarjetaCredito;
         this.cvc = cvc;
         this.saldoInicial = 15000;
+        this.millas = 0
     }
 
 }

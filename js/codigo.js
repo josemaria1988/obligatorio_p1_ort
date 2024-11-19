@@ -241,7 +241,8 @@ function crearDestinos() {
     let destinoRepetido = sistema.buscarElemento(sistema.destinos, "nombreDestino", nombreDestino);
 
     if (datosValidos && !destinoRepetido) {
-        let nuevoDestino = new Destinos(idDestinos, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        let idDestinoFinal = `DEST_ID_${idDestinos}`
+        let nuevoDestino = new Destinos(idDestinoFinal, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
         idDestinos++;
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"
@@ -256,20 +257,25 @@ function reservarDestino() {
     let nombreDestino = this.getAttribute("data-destino");
     let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
     let fechaViaje = document.querySelector("#fechaViaje").value;
-    console.log(fechaViaje)
     let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
-    console.log(cantidadDeDias)
     let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
-    console.log(cantidadPersonas)
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
-    let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-    let estadoReserva = "pendiente"
-    let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
-    sistema.agregarReserva(nuevaReserva)
-    document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
-    document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
-    alert("Reserva reservada con exito")
+    if(fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)){
+        let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
+        console.log(objetoReserva.precioPorNoche)
+        console.log(importeTotal)
+        console.log(cantidadDeDias)
+        let estadoReserva = "pendiente"
+        let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
+        sistema.agregarReserva(nuevaReserva)
+        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
+        document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
+        alert("Reserva reservada con exito")
+    }else{
+        alert("Ingrese los datos solicitados para la reserva")
+    }
+
 }
 
 // ................................MOSTRAR DESTINOS RESERVADOS AL USUARIO............................................
@@ -284,7 +290,6 @@ function mostrarReservas() {
         reservaHTML.innerHTML =
             `<h4>Reservas del Usuario: ${reservaActual.nombreDeUsuario}</h4>
                 <p>Destino: ${reservaActual.nombreDestino}</p>
-                <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
                 <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
                 <p>Fecha de salida: ${reservaActual.fecha}</p>
                 <p>Total a pagar: ${reservaActual.importeTotal}</p>
@@ -297,59 +302,82 @@ function mostrarReservas() {
 // ..................... GESTIONAR LAS RESERVAS DE LOS USUARIOS...............................
 
 function gestionarReservas() {
-    document.querySelector("#sectionGestionarReservas").innerHTML = "";
     let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
-    console.log(reservasDelUsuario)
 
     for (let i = 0; i < reservasDelUsuario.length; i++) {
-        let reservaActual = reservasDelUsuario[i]
+        let reservaActual = reservasDelUsuario[i];
 
-        let reservaHTML = document.createElement("article");
-        reservaHTML.innerHTML =
-            `<h4>Reservas del Usuario: ${reservaActual.nombreDeUsuario}</h4>
-                <p>Destino: ${reservaActual.nombreDestino}</p>
-                <p>Identificacion de reserva: ${reservaActual.idReserva}</p>
-                <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
-                <p>Fecha de salida: ${reservaActual.fecha}</p>
-                <p>Total a pagar: ${reservaActual.importeTotal}</p>
-                <p> Estado de la reserva: ${reservaActual.estado}</p>
-                <input type="button" class="btnConfirmar" data-confirmar="${reservaActual.idReserva}" value="Confirmar">
-                <input type="button" class="btnRechazar" data-rechazar="${reservaActual.idReserva}" value="Rechazar">`
-        document.querySelector("#sectionGestionarReservas").appendChild(reservaHTML)
+        if (reservaActual.estado === "confirmada") {
+            document.querySelector("#tablaConfirmadas tbody").innerHTML += `
+            <tr>
+                <td>${reservaActual.nombreDeUsuario}</td>
+                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.cantidadPersonas}</td>
+                <td>${reservaActual.fecha}</td>
+                <td>${reservaActual.importeTotal}</td>
+                <td>${reservaActual.estado}</td>
+            </tr>
+            `
+        }else if(reservaActual.estado === "pendiente"){
+            document.querySelector("#tablaPendientes tbody").innerHTML += `
+            <tr>
+                <td>${reservaActual.nombreDeUsuario}</td>
+                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.cantidadPersonas}</td>
+                <td>${reservaActual.fecha}</td>
+                <td>${reservaActual.importeTotal}</td>
+                <td>${reservaActual.estado}</td>
+                <td><input type="button" class="btnProcesar" data-confirmar="${reservaActual.idReserva}" value="Procesar"></td>
+            </tr>
+            `
+        }else if (reservaActual.estado === "cancelada") {
+            document.querySelector("#tablaCanceladas tbody").innerHTML += `
+            <tr>
+                <td>${reservaActual.nombreDeUsuario}</td>
+                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.cantidadPersonas}</td>
+                <td>${reservaActual.fecha}</td>
+                <td>${reservaActual.importeTotal}</td>
+                <td>${reservaActual.estado}</td>
+            </tr>`
 
     }
 
-    let btnsConfirmar = document.querySelectorAll(".btnConfirmar");
-    for (let i = 0; i < btnsConfirmar.length; i++) {
-        btnsConfirmar[i].addEventListener("click", confirmarReserva);
-    }
-
-    let btnsRechazar = document.querySelectorAll(".btnRechazar");
-    for (let i = 0; i < btnsRechazar.length; i++) {
-        btnsRechazar[i].addEventListener("click", rechazarReserva);
+    let btnsProcesar = document.querySelectorAll(".btnProcesar");
+    for (let i = 0; i < btnsProcesar.length; i++) {
+        btnsProcesar[i].addEventListener("click", confirmarReserva);
     }
 }
+}
 
-// CONFIRMAR RESERVA
+// ...............................CONFIRMAR RESERVA............................................
 
 function confirmarReserva() {
+    document.querySelector("#tablaConfirmadas tbody").innerHTML = "";
+    document.querySelector("#tablaPendientes tbody").innerHTML = "";
+    document.querySelector("#tablaCanceladas tbody").innerHTML = "";
+
     let idReserva = this.getAttribute("data-confirmar")
-    let reserva = sistema.obtenerObjeto(sistema.reservas, "id", idReserva);
+    let reserva = sistema.obtenerObjeto(sistema.reservas, "idReserva", idReserva);
     let usuario = sistema.obtenerObjeto(sistema.usuarios, "id", reserva.idUsuario)
     let destino = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", reserva.nombreDestino)
 
     if (reserva.cantidadPersonas > destino.cuposDisponibles) {
         alert("No hay suficientes cupos disponibles para confirmar la reserva.");
-        cancelarReserva();
+        reserva.estado = "cancelada"
+        gestionarReservas()
         return;
     }
 
     let resultado = sistema.cobrarAlUsuario(usuario, reserva.importeTotal, reserva.medioDePago)
-    if(resultado.cobro === true) {
+    if (resultado[0] === true) {
         destino.cuposDisponibles -= reserva.cantidadPersonas;
         reserva.estado = "confirmada";
-        alert("Reserva confirmada exitosamente.\n" + resultado.mensaje);
+        alert("Reserva confirmada exitosamente.\n" + resultado[1]);
+    }else {
+        alert(resultado[1])
+        reserva.estado = "cancelada"
     }
-    
-    
+
+    gestionarReservas()
 }

@@ -1,12 +1,12 @@
 class Sistema{
     constructor(){
-        this.destinos = [
-            new Destinos(0, "París", 1500, 10, "paris.jpg", true, "La ciudad del amor con arquitectura icónica y museos famosos."),
-            new Destinos(1, "Tokio", 2000, 8, "tokio.jpg", false, "Una mezcla vibrante de tradición y tecnología moderna."),
-            new Destinos(2, "Nueva York", 1800, 12, "nuevayork.jpg", true, "La ciudad que nunca duerme, llena de rascacielos y cultura."),
-            new Destinos(3, "Roma", 1400, 15, "roma.jpg", false, "Ciudad eterna, famosa por su historia y monumentos antiguos."),
-            new Destinos(4, "Sídney", 1700, 7, "sidney.jpg", true, "Famosa por la Ópera de Sídney y sus hermosas playas."),
-            new Destinos(5, "Río de Janeiro", 1300, 20, "riodejaneiro.jpg", false, "Hermosas playas, Carnaval y el Cristo Redentor.")
+        this.destinos = [ //ID único auto incremental con el prefijo “DEST_ID_x” (ejemplo: DEST_ID_5)
+            new Destinos("DEST_ID_0", "París", 1500, 10, "paris.jpg", true, "La ciudad del amor con arquitectura icónica y museos famosos."),
+            new Destinos("DEST_ID_1", "Tokio", 2000, 8, "tokio.jpg", false, "Una mezcla vibrante de tradición y tecnología moderna."),
+            new Destinos("DEST_ID_2", "Nueva York", 1800, 12, "nuevayork.jpg", true, "La ciudad que nunca duerme, llena de rascacielos y cultura."),
+            new Destinos("DEST_ID_3", "Roma", 1400, 15, "roma.jpg", false, "Ciudad eterna, famosa por su historia y monumentos antiguos."),
+            new Destinos("DEST_ID_4", "Sídney", 1700, 7, "sidney.jpg", true, "Famosa por la Ópera de Sídney y sus hermosas playas."),
+            new Destinos("DEST_ID_5", "Río de Janeiro", 1300, 20, "riodejaneiro.jpg", false, "Hermosas playas, Carnaval y el Cristo Redentor.")
         ];
         this.usuarios = [
             new Usuarios(0, "admin", "Jose", "Sosa", "admin", "clave123", "Jose Sosa", "", ""),
@@ -122,7 +122,10 @@ class Sistema{
                 }
             }
         } else if (usuarioActivo.tipo === "admin") {
-            reservasUsuario = [...this.reservas];
+            for(let i = 0; i < this.reservas.length; i++){
+                let reserva = this.reservas[i]
+                    reservasUsuario.push(reserva)
+            }
         }
 
         return reservasUsuario
@@ -130,24 +133,43 @@ class Sistema{
 
     // COMO COBRARLE AL USUARIO
     cobrarAlUsuario(usuario, importeTotal, medioDePago) {
-        let resultado = {cobro, mensaje}
+        let resultado = [];
+        let cobro = false;
+        let mensaje = "";
     
         if (medioDePago === "Millas") {
-            if (usuario.saldoInicial >= importeTotal) {
-                usuario.saldoInicial -= importeTotal;
-                resultado.cobro = true;
-                resultado.mensaje = "Pago realizado completamente con millas.";
+            if (usuario.millas >= importeTotal) {
+                // Pago completamente con millas
+                usuario.millas -= importeTotal;
+                cobro = true;
+                mensaje = "Pago realizado completamente con millas.";
+            } else if (usuario.millas < importeTotal && usuario.saldoInicial >= (importeTotal - usuario.millas)) {
+                // Pago con millas y saldo en efectivo
+                let restante = importeTotal - usuario.millas;
+                usuario.saldoInicial -= restante;
+                usuario.millas = 0; // Todas las millas se utilizan
+                cobro = true;
+                mensaje = `Pago realizado con millas y efectivo. Millas utilizadas: ${usuario.millas}, saldo restante pagado en efectivo: $${restante}.`;
             } else {
-                let restante = importeTotal - usuario.saldoInicial;
-                usuario.saldoInicial = 0;
-                resultado.cobro = true;
-                resultado.mensaje = `Pago realizado con millas y efectivo. Millas utilizadas: ${usuario.saldoInicial}, saldo restante pagado en efectivo: $${restante}.`
+                // Saldo insuficiente
+                mensaje = "No se pudo cobrar, saldo insuficiente. Reserva cancelada.";
             }
         } else if (medioDePago === "Efectivo") {
-            cobro = true;
-            mensaje = "Pago realizado completamente en efectivo.";
+            if (usuario.saldoInicial >= importeTotal) {
+                // Pago completamente en efectivo
+                usuario.saldoInicial -= importeTotal;
+                usuario.millas += importeTotal / 100; // Generar millas
+                cobro = true;
+                mensaje = "Pago realizado completamente en efectivo.";
+            } else {
+                // Saldo insuficiente
+                mensaje = "No se pudo cobrar, saldo insuficiente. Reserva cancelada.";
+            }
         }
     
+        // Armar el resultado final
+        resultado.push(cobro, mensaje);
         return resultado;
     }
+    
 }

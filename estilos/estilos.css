@@ -110,3 +110,90 @@ p {
     border: none;
     box-shadow: none;
 }
+
+/* General */
+body {
+    font-family: "Tahoma", "Verdana", sans-serif;
+    background-color: #c3c7cb; /* Gris típico de Windows 95 */
+    margin: 0;
+    padding: 20px;
+}
+
+/* Contenedor de las tablas */
+#sectionGestionarReservas {
+    padding: 20px;
+    background-color: #e0e0e0; /* Fondo claro */
+    border: 2px solid #a0a0a0; /* Borde oscuro */
+    box-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #7a7a7a; /* Relieve */
+}
+
+/* Títulos de las tablas */
+h3 {
+    color: #000000; /* Texto negro */
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #f0f0f0; /* Fondo claro */
+    border: 1px solid #000000; /* Borde negro */
+}
+
+/* Encabezados */
+table th {
+    background-color: #000080; /* Azul clásico */
+    color: #ffffff; /* Texto blanco */
+    font-weight: bold;
+    text-align: left;
+    padding: 5px;
+    border: 1px solid #000000; /* Borde negro */
+}
+
+/* Filas */
+table td {
+    padding: 5px;
+    border: 1px solid #000000; /* Borde negro */
+}
+
+/* Alternar colores de filas */
+table tr:nth-child(odd) td {
+    background-color: #e4e4e4; /* Gris claro */
+}
+
+table tr:nth-child(even) td {
+    background-color: #ffffff; /* Blanco */
+}
+
+/* Botones */
+input[type="button"] {
+    font-family: "Tahoma", "Verdana", sans-serif;
+    font-size: 12px;
+    padding: 2px 8px;
+    border: 2px solid #7a7a7a; /* Borde oscuro */
+    background-color: #e0e0e0; /* Fondo claro */
+    box-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #7a7a7a; /* Relieve */
+    cursor: pointer;
+    color: #000000; /* Texto negro */
+}
+
+input[type="button"]:hover {
+    background-color: #c3c3c3; /* Fondo más oscuro al pasar el mouse */
+}
+
+/* Scrollbar clásico */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #c3c7cb; /* Gris claro */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #7a7a7a; /* Gris oscuro */
+    border: 2px solid #c3c7cb; /* Relieve interior */
+}
