@@ -26,13 +26,12 @@ function inicio() {
     document.querySelector("#btnCargarDestino").addEventListener("click", crearDestinos);
 
     // MOSTRAR DESTINOS AL USUARIO
-    mostrarDestinos()
+    document.querySelector("#btnSectionViajes").addEventListener("click", mostrarDestinos);
+    mostrarDestinos();
 
     // MOSTRAR DESTINOS EN OFERTA
-    mostrarDestinosEnOferta()
-
-    // MOSTRAR ADMINISTRAR DESTINOS
-    mostrarAdministrarDestinos()
+    document.querySelector("#btnSectionOfertas").addEventListener("click", mostrarDestinosEnOferta);
+    mostrarDestinosEnOferta();
 
     //MOSTRAR RESERVAS AL USUARIO
     document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
