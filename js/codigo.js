@@ -388,13 +388,9 @@ function confirmarReserva() {
 // ...............................ADMINISTRAR DESTINOS............................................}
 
 function mostrarAdministrarDestinos(){
-    let destinos = sistema.destinos;
-
-    console.log(destinos);
     
     for(let i = 0; i < sistema.destinos.length; i++){
-        console.log("Se ejecutó la función mostrarAdministrarDestinos");
-        let destinoActual = destinos[i];
+        let destinoActual = sistema.destinos[i];
 
         document.querySelector("#tablaAdministrarDestinos tbody").innerHTML += `
             <tr>
@@ -405,7 +401,7 @@ function mostrarAdministrarDestinos(){
                 <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
                 <td>${destinoActual.estado}</td>
                 <td>
-                    <input type="button" class="btnModificarDestinos" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
+                    <input type="button" class="btnModificarDestinos" data-id="${destinoActual.id}" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
                 </td>
             </tr>
             `
@@ -413,7 +409,7 @@ function mostrarAdministrarDestinos(){
     
     let btnsModificarDestinos = document.querySelectorAll(".btnModificarDestinos")
     for(let i = 0; i < btnsModificarDestinos.length; i++){
-        btnsModificarDestinos[i].addEventListener("click", sistema.cambiarEstado);
+        btnsModificarDestinos[i].addEventListener("click", cambiarEstado);
     }
     
     let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos")
@@ -421,9 +417,17 @@ function mostrarAdministrarDestinos(){
         btnsModificarCupos[i].addEventListener("click", modificarCupos);
     }
 }
-
-function modificarEstado(){
-  console.log("llego")// acá quiero que si el destino tiene "estado" = activo, lo modifique a pausado y viceversa con un else pero aún no sé cómo hacerlo
+function cambiarEstado() {
+    let idDestino = this.getAttribute("data-id")
+    console.log(idDestino)
+    let destino = sistema.modificarEstado(idDestino)
+    console.log(destino)
+    if(destino){
+        document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = "";
+         mostrarAdministrarDestinos()
+    }else {
+        alert("no se encontro el destino a modificar")
+    }
 }
 
 function modificarCupos(){
