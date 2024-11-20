@@ -9,7 +9,7 @@ class Usuarios{
         this.numeroTarjetaCredito = numeroTarjetaCredito;
         this.cvc = cvc;
         this.saldoInicial = 15000;
-        this.millas = 0
+        this.millas = 0;
     }
 
 }
@@ -23,6 +23,7 @@ class Destinos{
         this.imagen = imagen;
         this.estaEnOferta = estaEnOferta;
         this.descripcion = descripcion;
+        this.estado = "activo";
     }
 }
 

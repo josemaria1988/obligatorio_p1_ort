@@ -31,6 +31,9 @@ function inicio() {
     // MOSTRAR DESTINOS EN OFERTA
     mostrarDestinosEnOferta()
 
+    // MOSTRAR ADMINISTRAR DESTINOS
+    mostrarAdministrarDestinos()
+
     //MOSTRAR RESERVAS AL USUARIO
     document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
 
@@ -93,9 +96,7 @@ function iniciarSesion() {
     } else {
         mensaje = "usuario no encontrado"
     }
-
     document.querySelector("#pLogin").innerHTML = mensaje
-
 }
 
 function cerrarSesion() {
@@ -141,7 +142,7 @@ function ocultarBotones() {
     }
 }
 
-function mostrarMenuOcultandoLoginYRegistro() {
+function mostrarMenuOcultandoLoginYRegistro(){
     mostrarBotones(usuarioActivo.tipo)
     document.querySelector("#sectionViajes").style.display = "block"
     document.querySelector("#sectionLogin").style.display = "none";
@@ -154,7 +155,6 @@ function mostrarMenuOcultandoLoginYRegistro() {
 
 
 //.........................MOSTRAR TODOS LOS DESTINOS..............................
-
 function mostrarDestinos() {
     document.querySelector("#sectionViajes").innerHTML = "";
 
@@ -179,6 +179,7 @@ function mostrarDestinos() {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Millas">Millas</option>
             </select>
+            
             <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
@@ -263,17 +264,19 @@ function reservarDestino() {
 
     if(fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)){
         let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-        console.log(objetoReserva.precioPorNoche)
-        console.log(importeTotal)
-        console.log(cantidadDeDias)
+        console.log(objetoReserva.precioPorNoche);
+        console.log(importeTotal);
+        console.log(cantidadDeDias);
         let estadoReserva = "pendiente"
         let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
-        sistema.agregarReserva(nuevaReserva)
-        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
+        sistema.agregarReserva(nuevaReserva);
         document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
-        alert("Reserva reservada con exito")
+        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = "true";
+        document.querySelector(`[data-destino="${nombreDestino}"]`).style.cursor = "default";
+        document.querySelector(`[data-destino="${nombreDestino}"]`).style.backgroundcolor = "none";
+        alert("Reserva reservada con exito");
     }else{
-        alert("Ingrese los datos solicitados para la reserva")
+        alert("Ingrese los datos solicitados para la reserva");
     }
 
 }
@@ -380,4 +383,36 @@ function confirmarReserva() {
     }
 
     gestionarReservas()
+}
+
+// ...............................ADMINISTRAR DESTINOS............................................}
+
+function mostrarAdministrarDestinos(){
+    let destinos = sistema.destinos;
+
+    console.log(destinos);
+    
+    for(let i = 0; i < sistema.destinos.length; i++){
+        console.log("Se ejecutó la función mostrarAdministrarDestinos");
+        let destinoActual = destinos[i];
+        console.log(destinoActual)
+
+        document.querySelector("#tablaAdministrarDestinos tbody").innerHTML += `
+            <tr>
+                <td>${destinoActual.nombreDestino}</td>
+                <td>
+                    ${destinoActual.cuposDisponibles} <input type="button" id="btnModificarCupos" value="Modificar">
+                </td>
+                <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
+                <td>${destinoActual.estado}</td>
+                <td>
+                    <input type="button" id="btnAdministrarDestino" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
+                </td>
+            </tr>
+            `
+    }
+}
+
+function pausarDestino(){
+    
 }
