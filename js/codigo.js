@@ -97,9 +97,7 @@ function iniciarSesion() {
     } else {
         mensaje = "usuario no encontrado"
     }
-
     document.querySelector("#pLogin").innerHTML = mensaje
-
 }
 
 function cerrarSesion() {
@@ -145,7 +143,7 @@ function ocultarBotones() {
     }
 }
 
-function mostrarMenuOcultandoLoginYRegistro() {
+function mostrarMenuOcultandoLoginYRegistro(){
     mostrarBotones(usuarioActivo.tipo)
     document.querySelector("#sectionViajes").style.display = "block"
     document.querySelector("#sectionLogin").style.display = "none";
@@ -158,7 +156,6 @@ function mostrarMenuOcultandoLoginYRegistro() {
 
 
 //.........................MOSTRAR TODOS LOS DESTINOS..............................
-
 function mostrarDestinos() {
     document.querySelector("#sectionViajes").innerHTML = "";
 
@@ -183,6 +180,7 @@ function mostrarDestinos() {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Millas">Millas</option>
             </select>
+            
             <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
@@ -269,17 +267,19 @@ function reservarDestino() {
 
     if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)) {
         let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-        console.log(objetoReserva.precioPorNoche)
-        console.log(importeTotal)
-        console.log(cantidadDeDias)
+        console.log(objetoReserva.precioPorNoche);
+        console.log(importeTotal);
+        console.log(cantidadDeDias);
         let estadoReserva = "pendiente"
         let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
-        sistema.agregarReserva(nuevaReserva)
-        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
+        sistema.agregarReserva(nuevaReserva);
         document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
-        alert("Reserva reservada con exito")
-    } else {
-        alert("Ingrese los datos solicitados para la reserva")
+        document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = "true";
+        document.querySelector(`[data-destino="${nombreDestino}"]`).style.cursor = "default";
+        document.querySelector(`[data-destino="${nombreDestino}"]`).style.backgroundcolor = "none";
+        alert("Reserva reservada con exito");
+    }else{
+        alert("Ingrese los datos solicitados para la reserva");
     }
 
 }
@@ -386,4 +386,79 @@ function confirmarReserva() {
     }
 
     gestionarReservas()
+}
+
+// ...............................ADMINISTRAR DESTINOS............................................}
+
+function mostrarAdministrarDestinos(){
+    
+    for(let i = 0; i < sistema.destinos.length; i++){
+        let destinoActual = sistema.destinos[i];
+
+        document.querySelector("#tablaAdministrarDestinos tbody").innerHTML += `
+            <tr>
+                <td>${destinoActual.nombreDestino}</td>
+                <td class="cuposDisponiblesTd">
+                    ${destinoActual.cuposDisponibles} <input type="button" class="btnModificarCupos" value="Modificar">
+                </td>
+                <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
+                <td>${destinoActual.estado}</td>
+                <td>
+                    <input type="button" class="btnModificarDestinos" data-id="${destinoActual.id}" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
+                </td>
+            </tr>
+            `
+    }
+    
+    let btnsModificarDestinos = document.querySelectorAll(".btnModificarDestinos")
+    for(let i = 0; i < btnsModificarDestinos.length; i++){
+        btnsModificarDestinos[i].addEventListener("click", cambiarEstado);
+    }
+    
+    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos")
+    for(let i = 0; i < btnsModificarCupos.length; i++){
+        btnsModificarCupos[i].addEventListener("click", modificarCupos);
+    }
+}
+function cambiarEstado() {
+    let idDestino = this.getAttribute("data-id")
+    console.log(idDestino)
+    let destino = sistema.modificarEstado(idDestino)
+    console.log(destino)
+    if(destino){
+        document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = "";
+         mostrarAdministrarDestinos()
+    }else {
+        alert("no se encontro el destino a modificar")
+    }
+}
+
+function modificarCupos(){
+    let celdas = document.querySelectorAll(".cuposDisponiblesTd");
+    for(let i = 0; i < celdas.length;i++){
+        let input = document.createElement("input");
+        // acá creo el input de texto donde se ingresan los cupos, se crea para todas las celdas de la columna cupos
+        input.type = "text";
+        input.placeholder = "cantidad";
+
+        celdas[i].appendChild(input);
+
+        let btnConfirmar = document.createElement("input");
+        btnConfirmar.type = "button";
+        btnConfirmar.value = "Confirmar";
+        btnConfirmar.class = "btnConfirmarCupos";
+        
+        celdas[i].appendChild(btnConfirmar);
+    }
+
+    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos");
+    for(let i = 0; i < btnsModificarCupos.length; i++){
+        btnsModificarCupos[i].disabled = true;
+    }
+
+    let btnsConfirmarCupos = document.querySelectorAll(".btnConfirmarCupos")
+    for(let i=0; i < btnsConfirmarCupos.length; i++){
+        btnsConfirmarCupos[i].addEventListener("click", sistema.cambiarEstado);
+    }
+    
 }

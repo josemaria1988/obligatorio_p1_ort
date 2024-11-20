@@ -9,13 +9,13 @@ class Usuarios{
         this.numeroTarjetaCredito = numeroTarjetaCredito;
         this.cvc = cvc;
         this.saldoInicial = 15000;
-        this.millas = 0
+        this.millas = 0;
     }
 
 }
 
 class Destinos{
-    constructor(idDestinos, nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion){
+    constructor(idDestinos, nombreDestino, precioPorNoche, cuposDisponibles, imagen, estaEnOferta, descripcion, estado){
         this.id = idDestinos
         this.nombreDestino = nombreDestino;
         this.precioPorNoche = precioPorNoche;
@@ -23,7 +23,9 @@ class Destinos{
         this.imagen = imagen;
         this.estaEnOferta = estaEnOferta;
         this.descripcion = descripcion;
+        this.estado = estado;
     }
+        
 }
 
 class Reserva{
