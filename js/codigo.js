@@ -26,10 +26,12 @@ function inicio() {
     document.querySelector("#btnCargarDestino").addEventListener("click", crearDestinos);
 
     // MOSTRAR DESTINOS AL USUARIO
-    mostrarDestinos()
+    document.querySelector("#btnSectionViajes").addEventListener("click", mostrarDestinos);
+    mostrarDestinos();
 
     // MOSTRAR DESTINOS EN OFERTA
-    mostrarDestinosEnOferta()
+    document.querySelector("#btnSectionOfertas").addEventListener("click", mostrarDestinosEnOferta);
+    mostrarDestinosEnOferta();
 
     //MOSTRAR RESERVAS AL USUARIO
     document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
@@ -66,6 +68,8 @@ function tomarDatosRegistro() {
         document.querySelector("#txtClaveRegistro").value = "";
         document.querySelector("#txtTarjetaCredito").value = "";
         document.querySelector("#txtCvc").value = "";
+    } else if (!claveValida) {
+        mensaje = "La clave debe tener al menos una mayuscula, un numero y ser mayor a 5 caracteres"
     } else {
         document.querySelector("#txtUserNameRegistro").value = "";
         document.querySelector("#txtClaveRegistro").value = "";
@@ -198,7 +202,7 @@ function mostrarDestinosEnOferta() {
             let destinoHTML = document.createElement("article");
             destinoHTML.innerHTML =
                 `<h4>${destinoActual.nombreDestino}</h4>
-                <img src="/img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
+                <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
                 <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
                 <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
                 <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
@@ -232,7 +236,9 @@ function crearDestinos() {
     let nombreDestino = document.querySelector("#inputNombreDestino").value;
     let precioDestino = Number(document.querySelector("#inputPrecioPorNoche").value);
     let cuposDisponibles = Number(document.querySelector("#inputCuposDisponibles").value);
-    let imagenDestino = document.querySelector("#cargarImagenDestino");
+    let archivoImagen = document.querySelector("#cargarImagenDestino").files[0];
+    let imagenDestino = archivoImagen ? URL.createObjectURL(archivoImagen) : "";
+
     let enOferta = document.querySelector("#slcOferta").value;
     let descripcionDestino = document.querySelector("#descripcionDestino").value;
     let mensaje = "";
@@ -261,7 +267,7 @@ function reservarDestino() {
     let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
-    if(fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)){
+    if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)) {
         let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
         console.log(objetoReserva.precioPorNoche)
         console.log(importeTotal)
@@ -272,7 +278,7 @@ function reservarDestino() {
         document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = true;
         document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
         alert("Reserva reservada con exito")
-    }else{
+    } else {
         alert("Ingrese los datos solicitados para la reserva")
     }
 
@@ -318,7 +324,7 @@ function gestionarReservas() {
                 <td>${reservaActual.estado}</td>
             </tr>
             `
-        }else if(reservaActual.estado === "pendiente"){
+        } else if (reservaActual.estado === "pendiente") {
             document.querySelector("#tablaPendientes tbody").innerHTML += `
             <tr>
                 <td>${reservaActual.nombreDeUsuario}</td>
@@ -330,7 +336,7 @@ function gestionarReservas() {
                 <td><input type="button" class="btnProcesar" data-confirmar="${reservaActual.idReserva}" value="Procesar"></td>
             </tr>
             `
-        }else if (reservaActual.estado === "cancelada") {
+        } else if (reservaActual.estado === "cancelada") {
             document.querySelector("#tablaCanceladas tbody").innerHTML += `
             <tr>
                 <td>${reservaActual.nombreDeUsuario}</td>
@@ -341,13 +347,13 @@ function gestionarReservas() {
                 <td>${reservaActual.estado}</td>
             </tr>`
 
-    }
+        }
 
-    let btnsProcesar = document.querySelectorAll(".btnProcesar");
-    for (let i = 0; i < btnsProcesar.length; i++) {
-        btnsProcesar[i].addEventListener("click", confirmarReserva);
+        let btnsProcesar = document.querySelectorAll(".btnProcesar");
+        for (let i = 0; i < btnsProcesar.length; i++) {
+            btnsProcesar[i].addEventListener("click", confirmarReserva);
+        }
     }
-}
 }
 
 // ...............................CONFIRMAR RESERVA............................................
@@ -374,7 +380,7 @@ function confirmarReserva() {
         destino.cuposDisponibles -= reserva.cantidadPersonas;
         reserva.estado = "confirmada";
         alert("Reserva confirmada exitosamente.\n" + resultado[1]);
-    }else {
+    } else {
         alert(resultado[1])
         reserva.estado = "cancelada"
     }

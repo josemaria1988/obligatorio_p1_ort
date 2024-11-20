@@ -167,7 +167,6 @@ class Sistema{
             }
         }
     
-        // Armar el resultado final
         resultado.push(cobro, mensaje);
         return resultado;
     }
