@@ -400,7 +400,7 @@ function mostrarAdministrarDestinos(){
         document.querySelector("#tablaAdministrarDestinos tbody").innerHTML += `
             <tr>
                 <td>${destinoActual.nombreDestino}</td>
-                <td>
+                <td id="cuposDisponiblesTd">
                     ${destinoActual.cuposDisponibles} <input type="button" id="btnModificarCupos" value="Modificar">
                 </td>
                 <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
@@ -411,8 +411,21 @@ function mostrarAdministrarDestinos(){
             </tr>
             `
     }
+    document.querySelector("#btnAdministrarDestino").addEventListener("click", modificarDestino);
+    document.querySelector("#btnModificarCupos").addEventListener("click", modificarCupos);
 }
 
-function pausarDestino(){
-    
+function modificarDestino(){
+  // acá quiero que si el destino tiene "estado" = activo, lo modifique a pausado y viceversa con un else pero aún no sé cómo hacerlo
+}
+
+function modificarCupos(){
+    let celda = document.getElementById("cuposDisponiblesTd");
+
+    let input = document.createElement("input");
+    input.type = "text";
+    input.id = "txtModificarCupos";
+    input.placeholder = "cantidad";
+
+    celda.appendChild(input);
 }
