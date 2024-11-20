@@ -395,37 +395,63 @@ function mostrarAdministrarDestinos(){
     for(let i = 0; i < sistema.destinos.length; i++){
         console.log("Se ejecutó la función mostrarAdministrarDestinos");
         let destinoActual = destinos[i];
-        console.log(destinoActual)
 
         document.querySelector("#tablaAdministrarDestinos tbody").innerHTML += `
             <tr>
                 <td>${destinoActual.nombreDestino}</td>
-                <td id="cuposDisponiblesTd">
-                    ${destinoActual.cuposDisponibles} <input type="button" id="btnModificarCupos" value="Modificar">
+                <td class="cuposDisponiblesTd">
+                    ${destinoActual.cuposDisponibles} <input type="button" class="btnModificarCupos" value="Modificar">
                 </td>
                 <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
                 <td>${destinoActual.estado}</td>
                 <td>
-                    <input type="button" id="btnAdministrarDestino" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
+                    <input type="button" class="btnModificarDestinos" value="${destinoActual.estado === "activo" ? "Pausar" : "Activar"}">
                 </td>
             </tr>
             `
     }
-    document.querySelector("#btnAdministrarDestino").addEventListener("click", modificarDestino);
-    document.querySelector("#btnModificarCupos").addEventListener("click", modificarCupos);
+    
+    let btnsModificarDestinos = document.querySelectorAll(".btnModificarDestinos")
+    for(let i = 0; i < btnsModificarDestinos.length; i++){
+        btnsModificarDestinos[i].addEventListener("click", sistema.cambiarEstado);
+    }
+    
+    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos")
+    for(let i = 0; i < btnsModificarCupos.length; i++){
+        btnsModificarCupos[i].addEventListener("click", modificarCupos);
+    }
 }
 
-function modificarDestino(){
-  // acá quiero que si el destino tiene "estado" = activo, lo modifique a pausado y viceversa con un else pero aún no sé cómo hacerlo
+function modificarEstado(){
+  console.log("llego")// acá quiero que si el destino tiene "estado" = activo, lo modifique a pausado y viceversa con un else pero aún no sé cómo hacerlo
 }
 
 function modificarCupos(){
-    let celda = document.getElementById("cuposDisponiblesTd");
+    let celdas = document.querySelectorAll(".cuposDisponiblesTd");
+    for(let i = 0; i < celdas.length;i++){
+        let input = document.createElement("input");
+        // acá creo el input de texto donde se ingresan los cupos, se crea para todas las celdas de la columna cupos
+        input.type = "text";
+        input.placeholder = "cantidad";
 
-    let input = document.createElement("input");
-    input.type = "text";
-    input.id = "txtModificarCupos";
-    input.placeholder = "cantidad";
+        celdas[i].appendChild(input);
 
-    celda.appendChild(input);
+        let btnConfirmar = document.createElement("input");
+        btnConfirmar.type = "button";
+        btnConfirmar.value = "Confirmar";
+        btnConfirmar.class = "btnConfirmarCupos";
+        
+        celdas[i].appendChild(btnConfirmar);
+    }
+
+    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos");
+    for(let i = 0; i < btnsModificarCupos.length; i++){
+        btnsModificarCupos[i].disabled = true;
+    }
+
+    let btnsConfirmarCupos = document.querySelectorAll(".btnConfirmarCupos")
+    for(let i=0; i < btnsConfirmarCupos.length; i++){
+        btnsConfirmarCupos[i].addEventListener("click", sistema.cambiarEstado);
+    }
+    
 }

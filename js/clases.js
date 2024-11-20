@@ -25,6 +25,7 @@ class Destinos{
         this.descripcion = descripcion;
         this.estado = "activo";
     }
+        
 }
 
 class Reserva{

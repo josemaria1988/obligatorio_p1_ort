@@ -63,6 +63,18 @@ class Sistema{
         return objeto;
     }
 
+    cambiarEstado(){ // ESTA FUNCIONANDO PERO NO SE REFLEJA EN FRONTEND
+        console.log("llego")
+        for(let i = 0; i < sistema.destinos.length; i++){
+            let destinoActual = sistema.destinos[i];
+            if(destinoActual.estado = "activo"){
+                destinoActual.estado = "pausado";
+            }else{
+                destinoActual.estado = "activo";
+            }
+        }
+
+    }
 
     // METODOS VALIDAR LOGIN
 
