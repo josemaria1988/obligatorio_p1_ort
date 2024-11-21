@@ -284,7 +284,7 @@ function reservarDestino() {
     let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
-    if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)) {
+    if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas) && usuarioActivo.tipo === "user") {
         let importeTotal = cantidadPersonas * objetoDestino.precioPorNoche;
         let estadoReserva = "pendiente";
         let nuevaReserva = new Reserva(
@@ -306,8 +306,10 @@ function reservarDestino() {
         document.querySelector(`[data-destino="${nombreDestino}"]`).style.cursor = "default";
         document.querySelector(`[data-destino="${nombreDestino}"]`).style.backgroundcolor = "none";
         alert("Reserva reservada con exito");
-    }else{
-        alert("Ingrese los datos solicitados para la reserva");
+    }else if(usuarioActivo.tipo === "admin"){
+        alert("No te podes comprar a vos mismo campeon");
+    }else {
+        alert("ERROR: Falta ingresar algun dato.")
     }
 
 }
