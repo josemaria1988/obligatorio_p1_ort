@@ -28,19 +28,19 @@ class Destinos{
         
 }
 
-class Reserva{
-    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, fechaReserva, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estado, millas){
+class Reserva {
+    constructor(idReserva, idUsuario, destino, usuario, fechaReserva, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estado, millas) {
         this.idReserva = idReserva;
         this.idUsuario = idUsuario;
-        this.nombreDestino = nombreDestino;
-        this.nombreDeUsuario = nombreDeUsuario;
+        this.destino = destino;
+        this.usuario = usuario;
         this.fecha = fechaReserva;
         this.cantidadPersonas = cantidadPersonas;
         this.dias = cantidadDeDias;
         this.importeTotal = importeTotal;
         this.medioDePago = medioDePago;
         this.estado = estado;
-        this.millas = millas
+        this.millas = millas;
     }
 }
 
