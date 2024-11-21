@@ -27,11 +27,9 @@ function inicio() {
 
     // MOSTRAR DESTINOS AL USUARIO
     document.querySelector("#btnSectionViajes").addEventListener("click", mostrarDestinos);
-    mostrarDestinos();
 
     // MOSTRAR DESTINOS EN OFERTA
     document.querySelector("#btnSectionOfertas").addEventListener("click", mostrarDestinosEnOferta);
-    mostrarDestinosEnOferta();
 
     //MOSTRAR RESERVAS AL USUARIO
     document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
@@ -45,6 +43,11 @@ function inicio() {
 
     //MODIFICAR CUPOS
     document.querySelector("#confirmarCupo").addEventListener("click", confirmarCupos);
+    document.querySelector("#confirmarOferta").addEventListener("click", confirmarOferta);
+
+    // INFORME DE GANANCIAS
+    document.querySelector("#btnSectionPagos").addEventListener("click", gananciasTotales);
+    document.querySelector("#btnSectionPagos").addEventListener("click", mostrarInformeGanancias);
 }
 
 let sistema = new Sistema();
@@ -103,6 +106,7 @@ function iniciarSesion() {
         mensaje = "usuario no encontrado"
     }
     document.querySelector("#pLogin").innerHTML = mensaje
+    mostrarDestinos();
 }
 
 function cerrarSesion() {
@@ -186,6 +190,7 @@ function mostrarDestinos() {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Millas">Millas</option>
             </select>
+            <p>Usted senior ${usuarioActivo.nombre} tiene ${usuarioActivo.millas} millas acumuladas para usar </p>
             
             <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
 
@@ -217,7 +222,7 @@ function mostrarDestinosEnOferta() {
               <label for="cantidadDeDias">Hasta: </label>
               <input type="number" id="cantidadDeDias">
                <label for="cantidadPersonas">Cantidad de personas: </label>
-               <input type="number" name="" id="cantidadPersonas">
+               <input type="number" id="cantidadPersonas">
                <label for="slcMedioDePago">Seleccione un medio de pago: </label>
                <select id="slcMedioDePago">
                     <option value="Efectivo">Efectivo</option>
@@ -251,7 +256,8 @@ function crearDestinos() {
 
     if (datosValidos && !destinoRepetido) {
         let idDestinoFinal = `DEST_ID_${idDestinos}`
-        let nuevoDestino = new Destinos(idDestinoFinal, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        let estado = "activo"
+        let nuevoDestino = new Destinos(idDestinoFinal, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino, estado)
         idDestinos++;
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"
@@ -273,7 +279,7 @@ function reservarDestino() {
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
     if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)) {
-        let importeTotal = cantidadPersonas * objetoDestino.precioPorNoche * cantidadDeDias;
+        let importeTotal = cantidadPersonas * objetoDestino.precioPorNoche;
         let estadoReserva = "pendiente";
         let nuevaReserva = new Reserva(
             idReserva,
@@ -396,7 +402,10 @@ function confirmarReserva() {
         alert(resultado[1]);
         reserva.estado = "cancelada";
     }
-
+    let confirmacionMillas = sistema.actualizarMillasReservas(Number(idReserva), resultado[2])
+    if(confirmacionMillas){
+        alert("millas actualizadas en reserva")
+    }
     gestionarReservas();
 }
 
@@ -452,6 +461,7 @@ function mostrarSlcCupos(){
     opciones += `<option value="${destinoActual.id}"> ${destinoActual.nombreDestino}</option>`;
 };
     document.querySelector("#slcModificarCupo").innerHTML = opciones;
+    document.querySelector("#slcModificarOferta").innerHTML = opciones;
 };
 
 function confirmarCupos(){
@@ -469,6 +479,37 @@ function confirmarCupos(){
     mostrarAdministrarDestinos()
 }
 
+function confirmarOferta(){
+    let slcOferta = document.querySelector("#slcModificarOferta").value;
+    let destinoActualizado = sistema.actualizarEnOferta(slcOferta)
+    if(destinoActualizado){
+        alert("Destino modificado con exito")
+    }
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
+    mostrarAdministrarDestinos()
+}
+
 
 // Ver informe de ganancias
 
+function gananciasTotales(){
+    let ganancias = sistema.informeGananciasTotales();
+    document.querySelector("#pGananciasTotales").innerHTML = `Las ganancias acumuladas de todas las reservas confirmadas es $ ${ganancias}`
+}
+
+function mostrarInformeGanancias(){
+    for(let i = 0; i < sistema.reservas.length; i++){
+        let reservaActual = sistema.reservas[i];
+        if(reservaActual.estado === "confirmada") {
+            document.querySelector("#tablaInformesGanancias tbody").innerHTML += `
+            <tr>
+                <td>${reservaActual.destino.nombreDestino}</td>
+                <td>
+                    ${reservaActual.importeTotal}
+                </td>
+                <td>${reservaActual.cantidadPersonas}</td>
+            </tr>
+            `
+        }
+    }
+}
