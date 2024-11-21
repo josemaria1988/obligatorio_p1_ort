@@ -14,10 +14,12 @@
 <body>
     <main>
         <header>
+            <!-- Logo -->
             <figure>
                 <img src="/img/viajesretro.webp" alt="logo">
             </figure>
-
+        
+            <!-- Menú principal -->
             <nav>
                 <ul id="navPrincipal">
                     <li class="btnSection user" id="btnSectionViajes">
@@ -35,23 +37,25 @@
                     <li class="btnSection admin" id="btnSectionCrearDestinos">
                         <a href="#">Crear destinos</a>
                     </li>
-
                     <li class="btnSection admin" id="btnSectionAdministrarDestinos">
                         <a href="#">Administrar destinos</a>
                     </li>
-
                     <li class="btnSection admin" id="btnSectionGestionarReservas">
                         <a href="#">Gestionar Reservas</a>
                     </li>
                 </ul>
-                <p id="txtUsuarioActivo"></p>
-                <input type="button" id="btnCerrarSesion" value="SALIR">
+        
+                <!-- Usuario y botón SALIR -->
+                <div class="user-info">
+                    <p id="txtUsuarioActivo">Jose</p>
+                    <input type="button" id="btnCerrarSesion" value="SALIR">
+                </div>
             </nav>
         </header>
 
 
-        <section id="sectionRegistro">
-            <article>
+        <section id="sectionRegistro" class="card">
+            <article class="card">
                 <h3>Registro</h3>
                 <label for="txtNombrePersona">Ingrese su nombre</label><br>
                 <input type="text" id="txtNombrePersona"><br>
@@ -74,8 +78,8 @@
         <hr>
 
 
-        <section id="sectionLogin">
-            <article>
+        <section id="sectionLogin" class="card">
+            <article class="card">
                 <h3>LOGIN</h3>
                 <label for="txtNombreLogin">Ingrese su Usuario</label><br>
                 <input type="text" id="txtNombreLogin"><br>
@@ -87,19 +91,19 @@
 
         </section>
 
-        <section id="sectionViajes" class="section">
+        <section id="sectionViajes" class="section card">
             <h3>VIAJES</h3>
         </section>
 
-        <section id="sectionOfertas" class="section">
+        <section id="sectionOfertas" class="section card">
             <h3>OFERTAS</h3>
         </section>
 
-        <section id="sectionInformes" class="section">
+        <section id="sectionInformes" class="section card">
             <h3>INFORMES</h3>
         </section>
 
-        <section id="sectionPagos" class="section">
+        <section id="sectionPagos" class="section card">
             <h3>Informe de Ganancias</h3>
             <p id="pGananciasTotales"></p>
             <div>
@@ -118,7 +122,7 @@
             </div>
         </section>
 
-        <section id="sectionCrearDestinos" class="section">
+        <section id="sectionCrearDestinos" class="section card">
             <article>
                 <h3>CREAR DESTINOS</h3>
                 <label for="inputNombreDestino">Ingresa el nombre del Destino</label><br>
@@ -143,7 +147,7 @@
             </article>
         </section>
 
-        <section id="sectionAdministrarDestinos" class="section">
+        <section id="sectionAdministrarDestinos" class="section card">
             <h3>Administrar Destinos</h3>
 
             <div>
@@ -163,7 +167,7 @@
                 </table>
 
                 <label for="inputModificarCupo">Modificar Cupos de un destino</label>
-                <input type="number" id="inputModificarCupo">
+                <input type="number" id="inputModificarCupo" placeholder="Ingrese el nuevo cupo">
                 <select id="slcModificarCupo">
                 </select>
                 <input type="button" value="confirmar" id="confirmarCupo">
@@ -175,7 +179,7 @@
             </div>
         </section>
 
-        <section id="sectionGestionarReservas" class="section">
+        <section id="sectionGestionarReservas" class="section card">
             <h3>Gestionar Reservas de Usuarios</h3>
 
             <div>

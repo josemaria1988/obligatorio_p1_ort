@@ -132,7 +132,7 @@ function mostrarSeccion() {
     ocultarSecciones();
     let idBtn = this.getAttribute("id");
     let idSeccion = idBtn.charAt(3).toLowerCase() + idBtn.substring(4);
-    document.querySelector("#" + idSeccion).style.display = "block";
+    document.querySelector("#" + idSeccion).style.display = "inline";
 }
 function ocultarSecciones() {
     let seccion = document.querySelectorAll(".section");
@@ -144,7 +144,7 @@ function mostrarBotones(tipo) {
     ocultarBotones();
     let botonesMostrar = document.querySelectorAll("." + tipo);
     for (let i = 0; i < botonesMostrar.length; i++) {
-        botonesMostrar[i].style.display = "block";
+        botonesMostrar[i].style.display = "inline";
     }
 }
 function ocultarBotones() {
@@ -175,9 +175,10 @@ function mostrarDestinos() {
         if(destinoActual.estado === "activo") {
             let destinoHTML = document.createElement("article");
         destinoHTML.innerHTML =
-            `<h4>${destinoActual.nombreDestino}</h4>
+            `<article class="card">
+            <h4>${destinoActual.nombreDestino}</h4>
             <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
-            <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+            <p>Precio por persona: $${destinoActual.precioPorNoche}</p>
             <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
             <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
             <p>${destinoActual.descripcion}</p>
@@ -194,7 +195,8 @@ function mostrarDestinos() {
             </select>
             <p>Usted senior ${usuarioActivo.nombre} tiene ${usuarioActivo.millas} millas acumuladas para usar </p>
             
-            <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
+            <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">
+            </article>`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
         }
@@ -215,7 +217,7 @@ function mostrarDestinosEnOferta() {
             destinoHTML.innerHTML =
                 `<h4>${destinoActual.nombreDestino}</h4>
                 <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
-                <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+                <p>Precio por persona: $${destinoActual.precioPorNoche}</p>
                 <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
                 <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
                 <p>${destinoActual.descripcion}</p>
@@ -417,7 +419,7 @@ function confirmarReserva() {
 // ...............................ADMINISTRAR DESTINOS............................................}
 
 function mostrarAdministrarDestinos(){
-    
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
     for(let i = 0; i < sistema.destinos.length; i++){
         let destinoActual = sistema.destinos[i];
 
