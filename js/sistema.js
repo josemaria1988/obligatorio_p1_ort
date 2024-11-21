@@ -63,6 +63,8 @@ class Sistema{
         return objeto;
     }
 
+    // METODOS PARA MODIFICAR DESTINOS
+
     modificarEstado(idDestino){
         let destino = this.obtenerObjeto(this.destinos, "id", idDestino);
         if(destino.estado === "activo"){
@@ -71,6 +73,26 @@ class Sistema{
             destino.estado = "activo"
         }
         return destino
+    }
+
+    actualizarCuposDestino(idDestino, nuevoCupo) {
+        let destino = this.obtenerObjeto(this.destinos, "id", idDestino);
+        if (destino !== null && nuevoCupo >= 0) {
+            destino.cuposDisponibles = nuevoCupo;
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    actualizarEnOferta(idDestino){
+        let destino = this.obtenerObjeto(this.destinos, "id", idDestino);
+        if(destino.estaEnOferta === true){
+            destino.estaEnOferta = false
+        }else {
+            destino.estaEnOferta = true
+        }
+        return true
     }
 
     // METODOS VALIDAR LOGIN
@@ -112,7 +134,7 @@ class Sistema{
     validarCamposCrearDestino(nombre, precio, cupos, imagen, oferta, descripcion){
         let validar = false;
 
-        if(nombre !== "" && !isNaN(precio) && precio > 0 && !isNaN(cupos) && cupos>0 && imagen !== "" && oferta !== "" && descripcion !== ""){
+        if(nombre !== "" && !isNaN(precio) && precio > 0 && !isNaN(cupos) && cupos > 0 && imagen !== "" && oferta !== "" && descripcion !== ""){
             validar = true
         }
 
@@ -145,6 +167,7 @@ class Sistema{
         let resultado = [];
         let cobro = false;
         let mensaje = "";
+        let millasUsadas = 0;
     
         if (medioDePago === "Millas") {
             if (usuario.millas >= importeTotal) {
@@ -152,13 +175,15 @@ class Sistema{
                 usuario.millas -= importeTotal;
                 cobro = true;
                 mensaje = "Pago realizado completamente con millas.";
+                millasUsadas = importeTotal
             } else if (usuario.millas < importeTotal && usuario.saldoInicial >= (importeTotal - usuario.millas)) {
                 // Pago con millas y saldo en efectivo
+                millasUsadas = usuario.millas
                 let restante = importeTotal - usuario.millas;
                 usuario.saldoInicial -= restante;
-                usuario.millas = 0; // Todas las millas se utilizan
+                usuario.millas = restante / 100; // Todas las millas se utilizan
                 cobro = true;
-                mensaje = `Pago realizado con millas y efectivo. Millas utilizadas: ${usuario.millas}, saldo restante pagado en efectivo: $${restante}.`;
+                mensaje = `Pago realizado con millas y efectivo. Millas utilizadas: ${millasUsadas}, saldo restante pagado en efectivo: $${restante}.`;
             } else {
                 // Saldo insuficiente
                 mensaje = "No se pudo cobrar, saldo insuficiente. Reserva cancelada.";
@@ -176,8 +201,26 @@ class Sistema{
             }
         }
     
-        resultado.push(cobro, mensaje);
+        // Armar el resultado final
+        resultado.push(cobro, mensaje, millasUsadas);
         return resultado;
+    }
+
+    actualizarMillasReservas(idReserva, millas){
+        let reserva = this.obtenerObjeto(this.reservas, "idReserva", idReserva)
+        console.log(reserva)
+        reserva.millasUsadas = millas
+        return true
+    }
+
+    informeGananciasTotales(){
+        let resultado = 0;
+        for(let i = 0; i < this.reservas.length; i++){
+            let reservaActual = this.reservas[i]
+            if(reservaActual.estado === "confirmada" && reservaActual.medioDePago === "Efectivo")
+            resultado += reservaActual.importeTotal
+        }
+        return resultado
     }
     
 }

@@ -27,17 +27,27 @@ function inicio() {
 
     // MOSTRAR DESTINOS AL USUARIO
     document.querySelector("#btnSectionViajes").addEventListener("click", mostrarDestinos);
-    mostrarDestinos();
 
     // MOSTRAR DESTINOS EN OFERTA
     document.querySelector("#btnSectionOfertas").addEventListener("click", mostrarDestinosEnOferta);
-    mostrarDestinosEnOferta();
 
     //MOSTRAR RESERVAS AL USUARIO
     document.querySelector("#btnSectionInformes").addEventListener("click", mostrarReservas);
 
     //MOSTRAR RESERVAS AL ADMIN
     document.querySelector("#btnSectionGestionarReservas").addEventListener("click", gestionarReservas);
+
+    //MOSTRAR ADMINISTRAR DESTINOS
+    document.querySelector("#btnSectionAdministrarDestinos").addEventListener("click", mostrarAdministrarDestinos);
+    mostrarSlcCupos()
+
+    //MODIFICAR CUPOS
+    document.querySelector("#confirmarCupo").addEventListener("click", confirmarCupos);
+    document.querySelector("#confirmarOferta").addEventListener("click", confirmarOferta);
+
+    // INFORME DE GANANCIAS
+    document.querySelector("#btnSectionPagos").addEventListener("click", gananciasTotales);
+    document.querySelector("#btnSectionPagos").addEventListener("click", mostrarInformeGanancias);
 }
 
 let sistema = new Sistema();
@@ -98,6 +108,7 @@ function iniciarSesion() {
         mensaje = "usuario no encontrado"
     }
     document.querySelector("#pLogin").innerHTML = mensaje
+    mostrarDestinos();
 }
 
 function cerrarSesion() {
@@ -121,7 +132,7 @@ function mostrarSeccion() {
     ocultarSecciones();
     let idBtn = this.getAttribute("id");
     let idSeccion = idBtn.charAt(3).toLowerCase() + idBtn.substring(4);
-    document.querySelector("#" + idSeccion).style.display = "block";
+    document.querySelector("#" + idSeccion).style.display = "inline";
 }
 function ocultarSecciones() {
     let seccion = document.querySelectorAll(".section");
@@ -133,7 +144,7 @@ function mostrarBotones(tipo) {
     ocultarBotones();
     let botonesMostrar = document.querySelectorAll("." + tipo);
     for (let i = 0; i < botonesMostrar.length; i++) {
-        botonesMostrar[i].style.display = "block";
+        botonesMostrar[i].style.display = "inline";
     }
 }
 function ocultarBotones() {
@@ -161,11 +172,13 @@ function mostrarDestinos() {
 
     for (let i = 0; i < sistema.destinos.length; i++) {
         let destinoActual = sistema.destinos[i]
-        let destinoHTML = document.createElement("article");
+        if(destinoActual.estado === "activo") {
+            let destinoHTML = document.createElement("article");
         destinoHTML.innerHTML =
-            `<h4>${destinoActual.nombreDestino}</h4>
+            `<article class="card">
+            <h4>${destinoActual.nombreDestino}</h4>
             <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
-            <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+            <p>Precio por persona: $${destinoActual.precioPorNoche}</p>
             <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
             <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
             <p>${destinoActual.descripcion}</p>
@@ -180,10 +193,13 @@ function mostrarDestinos() {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Millas">Millas</option>
             </select>
+            <p>Usted senior ${usuarioActivo.nombre} tiene ${usuarioActivo.millas} millas acumuladas para usar </p>
             
-            <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
+            <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">
+            </article>`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
+        }
     }
     let btnsReservar = document.querySelectorAll(".btnReservar");
     for (let i = 0; i < btnsReservar.length; i++) {
@@ -196,12 +212,12 @@ function mostrarDestinosEnOferta() {
 
     for (let i = 0; i < sistema.destinos.length; i++) {
         let destinoActual = sistema.destinos[i]
-        if (destinoActual.estaEnOferta) {
+        if (destinoActual.estaEnOferta && destinoActual.estado === "activo") {
             let destinoHTML = document.createElement("article");
             destinoHTML.innerHTML =
                 `<h4>${destinoActual.nombreDestino}</h4>
                 <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
-                <p>Precio por noche: $${destinoActual.precioPorNoche}</p>
+                <p>Precio por persona: $${destinoActual.precioPorNoche}</p>
                 <p>Cupos disponibles: ${destinoActual.cuposDisponibles}</p>
                 <p>Oferta: ${destinoActual.estaEnOferta ? "Sí" : "No"}</p>
                 <p>${destinoActual.descripcion}</p>
@@ -210,7 +226,7 @@ function mostrarDestinosEnOferta() {
               <label for="cantidadDeDias">Hasta: </label>
               <input type="number" id="cantidadDeDias">
                <label for="cantidadPersonas">Cantidad de personas: </label>
-               <input type="number" name="" id="cantidadPersonas">
+               <input type="number" id="cantidadPersonas">
                <label for="slcMedioDePago">Seleccione un medio de pago: </label>
                <select id="slcMedioDePago">
                     <option value="Efectivo">Efectivo</option>
@@ -246,7 +262,8 @@ function crearDestinos() {
 
     if (datosValidos && !destinoRepetido) {
         let idDestinoFinal = `DEST_ID_${idDestinos}`
-        let nuevoDestino = new Destinos(idDestinoFinal, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino)
+        let estado = "activo"
+        let nuevoDestino = new Destinos(idDestinoFinal, nombreDestino, precioDestino, cuposDisponibles, imagenDestino, enOferta, descripcionDestino, estado)
         idDestinos++;
         sistema.agregarNuevoDestino(nuevoDestino);
         mensaje = "Destino agregado con éxito"
@@ -257,29 +274,47 @@ function crearDestinos() {
 }
 
 //.................................RESERVA DE DESTINOS USUARIO....................................
+let idReserva = 0
 function reservarDestino() {
+    idReserva++;
     let nombreDestino = this.getAttribute("data-destino");
-    let objetoReserva = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
+    let objetoDestino = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", nombreDestino);
     let fechaViaje = document.querySelector("#fechaViaje").value;
     let cantidadDeDias = Number(document.querySelector("#cantidadDeDias").value);
     let cantidadPersonas = Number(document.querySelector("#cantidadPersonas").value);
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
-    if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)) {
-        let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
-        console.log(objetoReserva.precioPorNoche);
-        console.log(importeTotal);
-        console.log(cantidadDeDias);
-        let estadoReserva = "pendiente"
-        let nuevaReserva = new Reserva(objetoReserva.id, usuarioActivo.id, objetoReserva.nombreDestino, usuarioActivo.nombreDeUsuario, fechaViaje, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estadoReserva)
+    if (fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas) && usuarioActivo.tipo === "user") {
+        let importeTotal = cantidadPersonas * objetoDestino.precioPorNoche;
+        let estadoReserva = "pendiente";
+        let nuevaReserva = new Reserva(
+            idReserva,
+            usuarioActivo.id,
+            objetoDestino,
+            usuarioActivo,
+            fechaViaje,
+            cantidadPersonas,
+            cantidadDeDias,
+            importeTotal,
+            medioDePago,
+            estadoReserva,
+            0
+        );
         sistema.agregarReserva(nuevaReserva);
         document.querySelector(`[data-destino="${nombreDestino}"]`).value = "Ya Reservado";
         document.querySelector(`[data-destino="${nombreDestino}"]`).disabled = "true";
         document.querySelector(`[data-destino="${nombreDestino}"]`).style.cursor = "default";
         document.querySelector(`[data-destino="${nombreDestino}"]`).style.backgroundcolor = "none";
         alert("Reserva reservada con exito");
+<<<<<<< HEAD
     }else{
         alert("Ingrese los datos solicitados para la reserva");
+=======
+    }else if(usuarioActivo.tipo === "admin"){
+        alert("No te podes comprar a vos mismo campeon");
+    }else {
+        alert("ERROR: Falta ingresar algun dato.")
+>>>>>>> matias
     }
 
 }
@@ -287,28 +322,27 @@ function reservarDestino() {
 // ................................MOSTRAR DESTINOS RESERVADOS AL USUARIO............................................
 function mostrarReservas() {
     document.querySelector("#sectionInformes").innerHTML = "";
-    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
+    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id);
 
     for (let i = 0; i < reservasDelUsuario.length; i++) {
-        let reservaActual = reservasDelUsuario[i]
+        let reservaActual = reservasDelUsuario[i];
 
         let reservaHTML = document.createElement("article");
         reservaHTML.innerHTML =
-            `<h4>Reservas del Usuario: ${reservaActual.nombreDeUsuario}</h4>
-                <p>Destino: ${reservaActual.nombreDestino}</p>
-                <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
-                <p>Fecha de salida: ${reservaActual.fecha}</p>
-                <p>Total a pagar: ${reservaActual.importeTotal}</p>
-                <p> Estado de la reserva: ${reservaActual.estado}</p>`
-        document.querySelector("#sectionInformes").appendChild(reservaHTML)
-
+            `<h4>Reservas del Usuario: ${reservaActual.usuario.nombreDeUsuario}</h4>
+            <p>Destino: ${reservaActual.destino.nombreDestino}</p>
+            <p>Cantidad de personas: ${reservaActual.cantidadPersonas}</p>
+            <p>Fecha de salida: ${reservaActual.fecha}</p>
+            <p>Total a pagar: ${reservaActual.importeTotal}</p>
+            <p> Estado de la reserva: ${reservaActual.estado}</p>`;
+        document.querySelector("#sectionInformes").appendChild(reservaHTML);
     }
 }
 
 // ..................... GESTIONAR LAS RESERVAS DE LOS USUARIOS...............................
 
 function gestionarReservas() {
-    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id)
+    let reservasDelUsuario = sistema.obtenerReservas(usuarioActivo.id);
 
     for (let i = 0; i < reservasDelUsuario.length; i++) {
         let reservaActual = reservasDelUsuario[i];
@@ -316,45 +350,43 @@ function gestionarReservas() {
         if (reservaActual.estado === "confirmada") {
             document.querySelector("#tablaConfirmadas tbody").innerHTML += `
             <tr>
-                <td>${reservaActual.nombreDeUsuario}</td>
-                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.usuario.nombreDeUsuario}</td>
+                <td>${reservaActual.destino.nombreDestino}</td>
                 <td>${reservaActual.cantidadPersonas}</td>
                 <td>${reservaActual.fecha}</td>
                 <td>${reservaActual.importeTotal}</td>
                 <td>${reservaActual.estado}</td>
-            </tr>
-            `
+            </tr>`;
         } else if (reservaActual.estado === "pendiente") {
             document.querySelector("#tablaPendientes tbody").innerHTML += `
             <tr>
-                <td>${reservaActual.nombreDeUsuario}</td>
-                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.usuario.nombreDeUsuario}</td>
+                <td>${reservaActual.destino.nombreDestino}</td>
                 <td>${reservaActual.cantidadPersonas}</td>
                 <td>${reservaActual.fecha}</td>
                 <td>${reservaActual.importeTotal}</td>
                 <td>${reservaActual.estado}</td>
                 <td><input type="button" class="btnProcesar" data-confirmar="${reservaActual.idReserva}" value="Procesar"></td>
-            </tr>
-            `
+            </tr>`;
         } else if (reservaActual.estado === "cancelada") {
             document.querySelector("#tablaCanceladas tbody").innerHTML += `
             <tr>
-                <td>${reservaActual.nombreDeUsuario}</td>
-                <td>${reservaActual.nombreDestino}</td>
+                <td>${reservaActual.usuario.nombreDeUsuario}</td>
+                <td>${reservaActual.destino.nombreDestino}</td>
                 <td>${reservaActual.cantidadPersonas}</td>
                 <td>${reservaActual.fecha}</td>
                 <td>${reservaActual.importeTotal}</td>
                 <td>${reservaActual.estado}</td>
-            </tr>`
-
+            </tr>`;
         }
+    }
 
         let btnsProcesar = document.querySelectorAll(".btnProcesar");
         for (let i = 0; i < btnsProcesar.length; i++) {
             btnsProcesar[i].addEventListener("click", confirmarReserva);
         }
     }
-}
+
 
 // ...............................CONFIRMAR RESERVA............................................
 
@@ -363,35 +395,38 @@ function confirmarReserva() {
     document.querySelector("#tablaPendientes tbody").innerHTML = "";
     document.querySelector("#tablaCanceladas tbody").innerHTML = "";
 
-    let idReserva = this.getAttribute("data-confirmar")
-    let reserva = sistema.obtenerObjeto(sistema.reservas, "idReserva", idReserva);
-    let usuario = sistema.obtenerObjeto(sistema.usuarios, "id", reserva.idUsuario)
-    let destino = sistema.obtenerObjeto(sistema.destinos, "nombreDestino", reserva.nombreDestino)
+    let idReserva = this.getAttribute("data-confirmar");
+    let reserva = sistema.obtenerObjeto(sistema.reservas, "idReserva", Number(idReserva));
+    let usuario = reserva.usuario;
+    let destino = reserva.destino;
 
     if (reserva.cantidadPersonas > destino.cuposDisponibles) {
         alert("No hay suficientes cupos disponibles para confirmar la reserva.");
-        reserva.estado = "cancelada"
-        gestionarReservas()
+        reserva.estado = "cancelada";
+        gestionarReservas();
         return;
     }
 
-    let resultado = sistema.cobrarAlUsuario(usuario, reserva.importeTotal, reserva.medioDePago)
+    let resultado = sistema.cobrarAlUsuario(usuario, reserva.importeTotal, reserva.medioDePago);
     if (resultado[0] === true) {
         destino.cuposDisponibles -= reserva.cantidadPersonas;
         reserva.estado = "confirmada";
         alert("Reserva confirmada exitosamente.\n" + resultado[1]);
     } else {
-        alert(resultado[1])
-        reserva.estado = "cancelada"
+        alert(resultado[1]);
+        reserva.estado = "cancelada";
     }
-
-    gestionarReservas()
+    let confirmacionMillas = sistema.actualizarMillasReservas(Number(idReserva), resultado[2])
+    if(confirmacionMillas){
+        alert("millas actualizadas en reserva")
+    }
+    gestionarReservas();
 }
 
 // ...............................ADMINISTRAR DESTINOS............................................}
 
 function mostrarAdministrarDestinos(){
-    
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
     for(let i = 0; i < sistema.destinos.length; i++){
         let destinoActual = sistema.destinos[i];
 
@@ -399,7 +434,7 @@ function mostrarAdministrarDestinos(){
             <tr>
                 <td>${destinoActual.nombreDestino}</td>
                 <td class="cuposDisponiblesTd">
-                    ${destinoActual.cuposDisponibles} <input type="button" class="btnModificarCupos" value="Modificar">
+                    ${destinoActual.cuposDisponibles}
                 </td>
                 <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
                 <td>${destinoActual.estado}</td>
@@ -420,11 +455,10 @@ function mostrarAdministrarDestinos(){
         btnsModificarCupos[i].addEventListener("click", modificarCupos);
     }
 }
+
 function cambiarEstado() {
     let idDestino = this.getAttribute("data-id")
-    console.log(idDestino)
     let destino = sistema.modificarEstado(idDestino)
-    console.log(destino)
     if(destino){
         document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = "";
          mostrarAdministrarDestinos()
@@ -433,32 +467,63 @@ function cambiarEstado() {
     }
 }
 
-function modificarCupos(){
-    let celdas = document.querySelectorAll(".cuposDisponiblesTd");
-    for(let i = 0; i < celdas.length;i++){
-        let input = document.createElement("input");
-        // acá creo el input de texto donde se ingresan los cupos, se crea para todas las celdas de la columna cupos
-        input.type = "text";
-        input.placeholder = "cantidad";
+function mostrarSlcCupos(){
+   let opciones = `<option value="">Seleccionar Destino</option>`;
 
-        celdas[i].appendChild(input);
+   for(let i = 0; i < sistema.destinos.length; i++){
+    let destinoActual = sistema.destinos[i];
+    opciones += `<option value="${destinoActual.id}"> ${destinoActual.nombreDestino}</option>`;
+};
+    document.querySelector("#slcModificarCupo").innerHTML = opciones;
+    document.querySelector("#slcModificarOferta").innerHTML = opciones;
+};
 
-        let btnConfirmar = document.createElement("input");
-        btnConfirmar.type = "button";
-        btnConfirmar.value = "Confirmar";
-        btnConfirmar.class = "btnConfirmarCupos";
-        
-        celdas[i].appendChild(btnConfirmar);
+function confirmarCupos(){
+    let idDestino = document.querySelector("#slcModificarCupo").value;
+    let nuevoCupo = document.querySelector("#inputModificarCupo").value
+    let destinoActualizado = sistema.actualizarCuposDestino(idDestino, nuevoCupo);
+
+    if(destinoActualizado){
+        alert("Cupo actualizado con exito")
+        mostrarAdministrarDestinos()
+    }else{
+        alert("Error al actualizar el cupo")
     }
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
+    mostrarAdministrarDestinos()
+}
 
-    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos");
-    for(let i = 0; i < btnsModificarCupos.length; i++){
-        btnsModificarCupos[i].disabled = true;
+function confirmarOferta(){
+    let slcOferta = document.querySelector("#slcModificarOferta").value;
+    let destinoActualizado = sistema.actualizarEnOferta(slcOferta)
+    if(destinoActualizado){
+        alert("Destino modificado con exito")
     }
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
+    mostrarAdministrarDestinos()
+}
 
-    let btnsConfirmarCupos = document.querySelectorAll(".btnConfirmarCupos")
-    for(let i=0; i < btnsConfirmarCupos.length; i++){
-        btnsConfirmarCupos[i].addEventListener("click", sistema.cambiarEstado);
+
+// Ver informe de ganancias
+
+function gananciasTotales(){
+    let ganancias = sistema.informeGananciasTotales();
+    document.querySelector("#pGananciasTotales").innerHTML = `Las ganancias acumuladas de todas las reservas confirmadas es $ ${ganancias}`
+}
+
+function mostrarInformeGanancias(){
+    for(let i = 0; i < sistema.reservas.length; i++){
+        let reservaActual = sistema.reservas[i];
+        if(reservaActual.estado === "confirmada") {
+            document.querySelector("#tablaInformesGanancias tbody").innerHTML += `
+            <tr>
+                <td>${reservaActual.destino.nombreDestino}</td>
+                <td>
+                    ${reservaActual.importeTotal}
+                </td>
+                <td>${reservaActual.cantidadPersonas}</td>
+            </tr>
+            `
+        }
     }
-    
 }
