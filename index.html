@@ -30,7 +30,7 @@
                         <a href="#">Historial de Reservas</a>
                     </li>
                     <li class="btnSection admin" id="btnSectionPagos">
-                        <a href="#">Historial de Pagos</a>
+                        <a href="#">Informe de Ganancias</a>
                     </li>
                     <li class="btnSection admin" id="btnSectionCrearDestinos">
                         <a href="#">Crear destinos</a>
@@ -100,7 +100,22 @@
         </section>
 
         <section id="sectionPagos" class="section">
-            <h3>HISTORIAL DE PAGOS</h3>
+            <h3>Informe de Ganancias</h3>
+            <p id="pGananciasTotales"></p>
+            <div>
+                <table id="tablaInformesGanancias">
+                    <thead>
+                        <tr>
+                            <th>Destino</th>
+                            <th>Ganancias Destino</th>
+                            <th>Cantidad Personas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filas dinámicas aquí -->
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section id="sectionCrearDestinos" class="section">
@@ -130,6 +145,34 @@
 
         <section id="sectionAdministrarDestinos" class="section">
             <h3>Administrar Destinos</h3>
+
+            <div>
+                <table id="tablaAdministrarDestinos">
+                    <thead>
+                        <tr>
+                            <th>Destino</th>
+                            <th>Cupos</th>
+                            <th>En oferta</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filas dinámicas aquí -->
+                    </tbody>
+                </table>
+
+                <label for="inputModificarCupo">Modificar Cupos de un destino</label>
+                <input type="number" id="inputModificarCupo">
+                <select id="slcModificarCupo">
+                </select>
+                <input type="button" value="confirmar" id="confirmarCupo">
+
+                <label for="slcModificarOferta">Modificar destinos en oferta</label>
+                <select id="slcModificarOferta">
+                </select>
+                <input type="button" value="Modificar" id="confirmarOferta">
+            </div>
         </section>
 
         <section id="sectionGestionarReservas" class="section">
@@ -149,7 +192,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Filas dinámicas aquí -->
+                        
                     </tbody>
                 </table>
             </div>
@@ -170,7 +213,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Filas dinámicas aquí -->
+                       
                     </tbody>
                 </table>
             </div>
@@ -190,7 +233,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Filas dinámicas aquí -->
+                        
                     </tbody>
                 </table>
             </div>
