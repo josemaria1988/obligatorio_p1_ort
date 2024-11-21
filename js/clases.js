@@ -29,7 +29,7 @@ class Destinos{
 }
 
 class Reserva{
-    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, fechaReserva, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estado){
+    constructor(idReserva, idUsuario, nombreDestino, nombreDeUsuario, fechaReserva, cantidadPersonas, cantidadDeDias, importeTotal, medioDePago, estado, millas){
         this.idReserva = idReserva;
         this.idUsuario = idUsuario;
         this.nombreDestino = nombreDestino;
@@ -40,5 +40,12 @@ class Reserva{
         this.importeTotal = importeTotal;
         this.medioDePago = medioDePago;
         this.estado = estado;
+        this.millas = millas
     }
 }
+
+//recorrer el array de reservas y sumar importeTotal
+
+//recorrer el array de destinos y  por cada destino
+//llamar a una funcion y le van a pasar el id de destino
+//dentro de esa funcion van a rrecorrer el array de reservas y si el destino coincide con el destion de la reserva, van a sumar la cantidad de personas en esa reserva

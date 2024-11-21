@@ -38,6 +38,13 @@ function inicio() {
 
     //MOSTRAR RESERVAS AL ADMIN
     document.querySelector("#btnSectionGestionarReservas").addEventListener("click", gestionarReservas);
+
+    //MOSTRAR ADMINISTRAR DESTINOS
+    document.querySelector("#btnSectionAdministrarDestinos").addEventListener("click", mostrarAdministrarDestinos);
+    mostrarSlcCupos()
+
+    //MODIFICAR CUPOS
+    document.querySelector("#confirmarCupo").addEventListener("click", confirmarCupos);
 }
 
 let sistema = new Sistema();
@@ -159,7 +166,8 @@ function mostrarDestinos() {
 
     for (let i = 0; i < sistema.destinos.length; i++) {
         let destinoActual = sistema.destinos[i]
-        let destinoHTML = document.createElement("article");
+        if(destinoActual.estado === "activo") {
+            let destinoHTML = document.createElement("article");
         destinoHTML.innerHTML =
             `<h4>${destinoActual.nombreDestino}</h4>
             <img src="img/${destinoActual.imagen}" alt="${destinoActual.nombreDestino}" style="width:150px;">
@@ -182,6 +190,7 @@ function mostrarDestinos() {
             <input type="button" class="btnReservar" value="Reservar" data-destino="${destinoActual.nombreDestino}">`
 
         document.querySelector("#sectionViajes").appendChild(destinoHTML);
+        }
     }
     let btnsReservar = document.querySelectorAll(".btnReservar");
     for (let i = 0; i < btnsReservar.length; i++) {
@@ -194,7 +203,7 @@ function mostrarDestinosEnOferta() {
 
     for (let i = 0; i < sistema.destinos.length; i++) {
         let destinoActual = sistema.destinos[i]
-        if (destinoActual.estaEnOferta) {
+        if (destinoActual.estaEnOferta && destinoActual.estado === "activo") {
             let destinoHTML = document.createElement("article");
             destinoHTML.innerHTML =
                 `<h4>${destinoActual.nombreDestino}</h4>
@@ -262,7 +271,7 @@ function reservarDestino() {
     let medioDePago = document.querySelector("#slcMedioDePago").value;
 
     if(fechaViaje !== "" && !isNaN(cantidadDeDias) && !isNaN(cantidadPersonas)){
-        let importeTotal = cantidadPersonas * cantidadDeDias * objetoReserva.precioPorNoche
+        let importeTotal = cantidadPersonas * objetoReserva.precioPorNoche
         console.log(objetoReserva.precioPorNoche);
         console.log(importeTotal);
         console.log(cantidadDeDias);
@@ -395,7 +404,7 @@ function mostrarAdministrarDestinos(){
             <tr>
                 <td>${destinoActual.nombreDestino}</td>
                 <td class="cuposDisponiblesTd">
-                    ${destinoActual.cuposDisponibles} <input type="button" class="btnModificarCupos" value="Modificar">
+                    ${destinoActual.cuposDisponibles}
                 </td>
                 <td>${destinoActual.estaEnOferta ? "Sí" : "No"}</td>
                 <td>${destinoActual.estado}</td>
@@ -416,11 +425,10 @@ function mostrarAdministrarDestinos(){
         btnsModificarCupos[i].addEventListener("click", modificarCupos);
     }
 }
+
 function cambiarEstado() {
     let idDestino = this.getAttribute("data-id")
-    console.log(idDestino)
     let destino = sistema.modificarEstado(idDestino)
-    console.log(destino)
     if(destino){
         document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = "";
          mostrarAdministrarDestinos()
@@ -429,32 +437,31 @@ function cambiarEstado() {
     }
 }
 
-function modificarCupos(){
-    let celdas = document.querySelectorAll(".cuposDisponiblesTd");
-    for(let i = 0; i < celdas.length;i++){
-        let input = document.createElement("input");
-        // acá creo el input de texto donde se ingresan los cupos, se crea para todas las celdas de la columna cupos
-        input.type = "text";
-        input.placeholder = "cantidad";
+function mostrarSlcCupos(){
+   let opciones = `<option value="">Seleccionar Destino</option>`;
 
-        celdas[i].appendChild(input);
+   for(let i = 0; i < sistema.destinos.length; i++){
+    let destinoActual = sistema.destinos[i];
+    opciones += `<option value="${destinoActual.id}"> ${destinoActual.nombreDestino}</option>`;
+};
+    document.querySelector("#slcModificarCupo").innerHTML = opciones;
+};
 
-        let btnConfirmar = document.createElement("input");
-        btnConfirmar.type = "button";
-        btnConfirmar.value = "Confirmar";
-        btnConfirmar.class = "btnConfirmarCupos";
-        
-        celdas[i].appendChild(btnConfirmar);
+function confirmarCupos(){
+    let idDestino = document.querySelector("#slcModificarCupo").value;
+    let nuevoCupo = document.querySelector("#inputModificarCupo").value
+    let destinoActualizado = sistema.actualizarCuposDestino(idDestino, nuevoCupo);
+
+    if(destinoActualizado){
+        alert("Cupo actualizado con exito")
+        mostrarAdministrarDestinos()
+    }else{
+        alert("Error al actualizar el cupo")
     }
-
-    let btnsModificarCupos = document.querySelectorAll(".btnModificarCupos");
-    for(let i = 0; i < btnsModificarCupos.length; i++){
-        btnsModificarCupos[i].disabled = true;
-    }
-
-    let btnsConfirmarCupos = document.querySelectorAll(".btnConfirmarCupos")
-    for(let i=0; i < btnsConfirmarCupos.length; i++){
-        btnsConfirmarCupos[i].addEventListener("click", sistema.cambiarEstado);
-    }
-    
+    document.querySelector("#tablaAdministrarDestinos tbody").innerHTML = ""
+    mostrarAdministrarDestinos()
 }
+
+
+// Ver informe de ganancias
+

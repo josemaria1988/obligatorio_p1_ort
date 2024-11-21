@@ -63,6 +63,8 @@ class Sistema{
         return objeto;
     }
 
+    // METODOS PARA MODIFICAR DESTINOS
+
     modificarEstado(idDestino){
         let destino = this.obtenerObjeto(this.destinos, "id", idDestino);
         if(destino.estado === "activo"){
@@ -71,6 +73,18 @@ class Sistema{
             destino.estado = "activo"
         }
         return destino
+    }
+
+    actualizarCuposDestino(idDestino, nuevoCupo) {
+        console.log(idDestino)
+        console.log(nuevoCupo)
+        let destino = this.obtenerObjeto(this.destinos, "id", idDestino);
+        if (destino !== null && nuevoCupo >= 0) {
+            destino.cuposDisponibles = nuevoCupo;
+            return true;
+        }else {
+            return false;
+        }
     }
 
     // METODOS VALIDAR LOGIN
